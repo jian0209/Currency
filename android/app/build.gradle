@@ -262,6 +262,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-i18n')
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion

@@ -56,6 +56,10 @@ export default function CurrencyScreen(props) {
   }, [navigation]);
 
   useEffect(() => {
+    console.log(defaultLegalDecimal);
+  }, [defaultLegalDecimal]);
+
+  useEffect(() => {
     let tempTo = [];
     selectedCurrency.forEach((item, index) => {
       if (item.name !== isSelected) {
@@ -162,7 +166,7 @@ export default function CurrencyScreen(props) {
 
   return (
     <View style={GlobalStyle.container}>
-      {selectedCurrency.map((item, index) => {
+      {selectedCurrency.map((item, index, i) => {
         return (
           <View key={index}>
             <Swipeable
@@ -174,6 +178,11 @@ export default function CurrencyScreen(props) {
               }}
               onSwipeableLeftWillOpen={() => {
                 navigation.navigate('CurrencyList', { item });
+                if (item.name === isSelected && item.id === 1) {
+                  setIsSelected(selectedCurrency[+item.id].name);
+                } else if (item.name === isSelected) {
+                  setIsSelected(selectedCurrency[+item.id - 2].name);
+                }
               }}
               onSwipeableRightWillOpen={() => {
                 navigation.navigate('CurrencyDetails', { item });
@@ -220,7 +229,7 @@ export default function CurrencyScreen(props) {
                         {currencyDict[item.name] &&
                         currencyDict[item.name].amount
                           ? currencyDict[item.name].amount.toFixed(
-                              +defaultLegalDecimal.split('_')[0] || 4
+                              +defaultLegalDecimal.split('_')[0]
                             )
                           : currencyDict[item.name] &&
                             currencyDict[item.name].defaultAmount

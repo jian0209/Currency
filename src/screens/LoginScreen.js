@@ -75,12 +75,29 @@ export default function CurrencyListScreen(props) {
   const handleRegister = () => {
     if (signupParam.password === signupParam.confirmPassword) {
       let temp = [...userData];
-      temp.push(signupParam);
-      UserStore.update((s) => {
-        s.userData = temp;
+      let isValid = true;
+      temp.forEach((item, index) => {
+        if (item.username === signupParam.username) {
+          isValid = false;
+        }
       });
-      setShowLogin(true);
-      setShowSignup(false);
+      if (isValid) {
+        temp.push(signupParam);
+        UserStore.update((s) => {
+          s.userData = temp;
+        });
+        let tempSignup = { ...signupParam };
+        tempSignup.confirmPassword = '';
+        tempSignup.password = '';
+        tempSignup.username = '';
+        setSignupParam(tempSignup);
+        setShowLogin(true);
+        setShowSignup(false);
+      } else {
+        Alert.alert('Register Failed', 'Username already exist', [
+          { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
+        ]);
+      }
     } else {
       Alert.alert('Register Failed', 'Password does not match', [
         { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
@@ -132,6 +149,7 @@ export default function CurrencyListScreen(props) {
             />
             <TextInputComp
               value={loginParam.password}
+              secureTextEntry={true}
               setValue={(val) => {
                 setLoginParam({ ...loginParam, password: val });
               }}
@@ -163,6 +181,7 @@ export default function CurrencyListScreen(props) {
             />
             <TextInputComp
               value={signupParam.password}
+              secureTextEntry={true}
               setValue={(val) => {
                 setSignupParam({ ...signupParam, password: val });
               }}
@@ -170,6 +189,7 @@ export default function CurrencyListScreen(props) {
             />
             <TextInputComp
               value={signupParam.confirmPassword}
+              secureTextEntry={true}
               setValue={(val) => {
                 setSignupParam({ ...signupParam, confirmPassword: val });
               }}

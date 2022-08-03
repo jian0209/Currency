@@ -4,10 +4,11 @@ import { TextInput } from 'react-native-gesture-handler';
 import color from '../styling/Color';
 
 export const TextInputComp = (props) => {
-  const { value, setValue, placeholder } = props;
+  const { value, setValue, placeholder, secureTextEntry } = props;
   return (
     <TextInput
       value={value}
+      secureTextEntry={secureTextEntry || false}
       onChangeText={(val) => setValue(val)}
       placeholder={placeholder}
       style={Styles.containerStyle}

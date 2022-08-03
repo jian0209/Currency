@@ -99,7 +99,10 @@ export default function CurrencyListScreen(props) {
               CurrencyStore.update((s) => {
                 s.currencyDict = currencyDict;
               });
-              setIsLoading(false);
+              setTimeout(() => {
+                setIsLoading(false);
+              }, 1000);
+              // setIsLoading(false);
               navigation.goBack();
             }}
             key={index}>

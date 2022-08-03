@@ -36,7 +36,7 @@ const App = () => {
       });
       await getLanguage().then((item) => {
         SettingStore.update((s) => {
-          s.language = item || 'en';
+          s.language = item || 0;
         });
       });
       await getFirstScreen().then((item) => {
@@ -45,7 +45,6 @@ const App = () => {
         });
       });
       await getCurrencyValue().then((item) => {
-        console.log(item);
         SettingStore.update((s) => {
           s.defaultNumber = item || 100;
         });
@@ -54,7 +53,14 @@ const App = () => {
       // init selected currency
       let selectedCurrencyName;
       await getCurrency().then((item) => {
-        selectedCurrencyName = item;
+        selectedCurrencyName = item || [
+          'USD',
+          'EUR',
+          'JPY',
+          'GBP',
+          'SGD',
+          'CAD',
+        ];
         CurrencyStore.update((s) => {
           s.selectedCurrencyName = item || [
             'USD',

@@ -14,6 +14,7 @@ import {
 import { SettingStore } from '../stores/SettingStorage';
 import { UserStore } from '../stores/UserStore';
 import { setLanguage } from '../stores/LocalStorage';
+import I18n from '../language/i18n';
 
 export default function GeneralSettingsScreen(props) {
   const { navigation } = props;
@@ -93,7 +94,10 @@ export default function GeneralSettingsScreen(props) {
           style={CardStyle.insideSettingCard}>
           <View style={CardStyle.settingMainLeftCard}>
             {showLanguage ? <DownIcon /> : <RightIcon />}
-            <Text style={TextStyle.settingText}>Language</Text>
+            <Text style={TextStyle.settingText}>
+              {I18n.t('language')}
+              Language
+            </Text>
           </View>
           <Text style={TextStyle.settingDropDownText}>
             {language[+defaultLanguage].name}
