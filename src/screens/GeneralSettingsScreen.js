@@ -94,10 +94,7 @@ export default function GeneralSettingsScreen(props) {
           style={CardStyle.insideSettingCard}>
           <View style={CardStyle.settingMainLeftCard}>
             {showLanguage ? <DownIcon /> : <RightIcon />}
-            <Text style={TextStyle.settingText}>
-              {I18n.t('language')}
-              Language
-            </Text>
+            <Text style={TextStyle.settingText}>{I18n.t('language')}</Text>
           </View>
           <Text style={TextStyle.settingDropDownText}>
             {language[+defaultLanguage].name}
@@ -113,6 +110,13 @@ export default function GeneralSettingsScreen(props) {
                     s.language = item.value;
                   });
                   setLanguage(item.value.toString());
+                  if (item.value === 0) {
+                    I18n.locale = 'en';
+                  } else if (item.value === 1) {
+                    I18n.locale = 'zh_cn';
+                  } else {
+                    I18n.locale = 'zh_tw';
+                  }
                 }}>
                 <Text
                   style={

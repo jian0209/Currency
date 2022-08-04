@@ -54,6 +54,17 @@ export default function CurrencyListScreen(props) {
         break;
       }
     }
+    if (loginParam.username === '' || loginParam.password === '') {
+      Alert.alert('Login Failed', 'Username or Password empty', [
+        // {
+        //   text: 'Cancel',
+        //   onPress: () => console.log('Cancel Pressed'),
+        //   style: 'cancel',
+        // },
+        { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
+      ]);
+      return;
+    }
     if (isValid) {
       UserStore.update((s) => {
         s.userInfo = loginParam;
@@ -73,6 +84,17 @@ export default function CurrencyListScreen(props) {
   };
 
   const handleRegister = () => {
+    if (signupParam.username === '' || signupParam.password === '') {
+      Alert.alert('Register Failed', 'Username or Password empty', [
+        // {
+        //   text: 'Cancel',
+        //   onPress: () => console.log('Cancel Pressed'),
+        //   style: 'cancel',
+        // },
+        { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
+      ]);
+      return;
+    }
     if (signupParam.password === signupParam.confirmPassword) {
       let temp = [...userData];
       let isValid = true;
