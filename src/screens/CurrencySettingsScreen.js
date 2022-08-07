@@ -16,6 +16,8 @@ import {
 } from '../components/Icon';
 import { ScrollView } from 'react-native-gesture-handler';
 import { setCurrencyValue, setDecimal } from '../stores/LocalStorage';
+import { EMPTY_NUMBER } from '../utils/constant';
+import I18n from 'react-native-i18n';
 
 export default function CurrencySettingsScreen(props) {
   const { navigation } = props;
@@ -54,6 +56,7 @@ export default function CurrencySettingsScreen(props) {
 
   const decimalLegalList = CurrencyStore.useState((s) => s.decimalLegalList);
   const decimalCryptoList = CurrencyStore.useState((s) => s.decimalCryptoList);
+  const updatedDate = CurrencyStore.useState((s) => s.updatedDate);
   const defaultNumber = SettingStore.useState((s) => s.defaultNumber);
   const defaultLegalDecimal = SettingStore.useState(
     (s) => s.defaultLegalDecimal
@@ -71,13 +74,13 @@ export default function CurrencySettingsScreen(props) {
         <TouchableOpacity
           style={ButtonStyle.headerLeftBtn}
           onPress={() => {
-            navigation.goBack();
+            navigation.navigate('Currency');
           }}>
           <BackIcon />
         </TouchableOpacity>
       ),
       headerTitle: () => (
-        <Text style={TextStyle.mainText}>Conversion Settings</Text>
+        <Text style={TextStyle.mainText}>{I18n.t('conversionSetting')}</Text>
       ),
       headerRight: () => (
         <TouchableOpacity
@@ -92,7 +95,7 @@ export default function CurrencySettingsScreen(props) {
   }, [navigation]);
 
   const handleDecimalLegal = (val) => {
-    let currentNumber = +defaultLegalDecimal.split('_')[0] || 0;
+    let currentNumber = +defaultLegalDecimal.split('_')[0] || EMPTY_NUMBER;
     if (val) {
       // add decimal
       currentNumber += 2;
@@ -141,7 +144,7 @@ export default function CurrencySettingsScreen(props) {
     <ScrollView style={GlobalStyle.container}>
       <View style={CardStyle.settingSubCard}>
         <Text style={TextStyle.settingSubText}>
-          Last Updated Today {moment().format('HH:mm, DD MMM').toString()}
+          {I18n.t('lastUpdate')} {updatedDate}
         </Text>
       </View>
       <View style={CardStyle.settingCard}>
@@ -152,7 +155,9 @@ export default function CurrencySettingsScreen(props) {
           style={CardStyle.insideSettingCard}>
           <View style={CardStyle.settingMainLeftCard}>
             {showCurrencyValue ? <DownIcon /> : <RightIcon />}
-            <Text style={TextStyle.settingText}>Default Currency Value</Text>
+            <Text style={TextStyle.settingText}>
+              {I18n.t('defaultCurrency')}
+            </Text>
           </View>
           <Text style={TextStyle.settingDropDownText}>{defaultNumber}</Text>
         </TouchableOpacity>
@@ -191,12 +196,14 @@ export default function CurrencySettingsScreen(props) {
           style={CardStyle.insideSettingCard}>
           <View style={CardStyle.settingMainLeftCard}>
             {showDecimal ? <DownIcon /> : <RightIcon />}
-            <Text style={TextStyle.settingText}>Set Decimal Digits</Text>
+            <Text style={TextStyle.settingText}>{I18n.t('decimalDigits')}</Text>
           </View>
         </TouchableOpacity>
         {showDecimal ? (
           <View style={CardStyle.settingDropDownCard}>
-            <Text style={TextStyle.decimalLeftText}>Legal Tender</Text>
+            <Text style={TextStyle.decimalLeftText}>
+              {I18n.t('legalTender')}
+            </Text>
             <View style={CardStyle.settingDropDownInsideCard}>
               <View style={CardStyle.settingDropDownDecimalLeftCard}>
                 <TouchableOpacity
@@ -221,7 +228,7 @@ export default function CurrencySettingsScreen(props) {
                 {decimalLegalList[defaultLegalDecimal.split('_')[0] / 2].num}
               </Text>
             </View>
-            <Text style={TextStyle.decimalLeftText}>Cryptocurrency</Text>
+            <Text style={TextStyle.decimalLeftText}>{I18n.t('crypto')}</Text>
             <View style={CardStyle.settingDropDownInsideCard}>
               <View style={CardStyle.settingDropDownDecimalLeftCard}>
                 <TouchableOpacity

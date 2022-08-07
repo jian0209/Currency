@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Pressable, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { GlobalStyle } from '../styling/Global';
 import { TextStyle } from '../styling/TextStyle';
@@ -46,13 +46,13 @@ export default function GeneralSettingsScreen(props) {
         <TouchableOpacity
           style={ButtonStyle.headerLeftBtn}
           onPress={() => {
-            navigation.goBack();
+            navigation.navigate('CurrencySettings');
           }}>
           <BackIcon />
         </TouchableOpacity>
       ),
       headerTitle: () => (
-        <Text style={TextStyle.mainText}>Account Setting</Text>
+        <Text style={TextStyle.mainText}>{I18n.t('accountSetting')}</Text>
       ),
       //   headerRight: () => <View>{/* <Text>asd</Text> */}</View>,
     });
@@ -65,9 +65,9 @@ export default function GeneralSettingsScreen(props) {
           if (!token) {
             navigation.navigate('Login');
           } else {
-            Alert.alert('Logout', 'Are You sure you want to logout?', [
+            Alert.alert(I18n.t('logout'), I18n.t('logoutDesc'), [
               {
-                text: 'Yes',
+                text: I18n.t('yes'),
                 onPress: () => {
                   UserStore.update((s) => {
                     s.token = '';
@@ -76,13 +76,15 @@ export default function GeneralSettingsScreen(props) {
                 },
                 style: 'cancel',
               },
-              { text: 'No', onPress: () => console.log('No') },
+              { text: I18n.t('no'), onPress: () => console.log('No') },
             ]);
           }
         }}
         style={CardStyle.settingSubCard}>
         <Text style={TextStyle.settingSubTextWhite}>
-          {token ? 'Username: ' + userInfo.username : 'Login / Register'}
+          {token
+            ? I18n.t('username') + ': ' + userInfo.username
+            : I18n.t('accountSettingLogin')}
         </Text>
         <LoginUserIcon />
       </Pressable>

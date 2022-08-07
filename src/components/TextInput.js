@@ -2,13 +2,14 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import color from '../styling/Color';
+import { EMPTY_BOOLEAN } from '../utils/constant';
 
 export const TextInputComp = (props) => {
   const { value, setValue, placeholder, secureTextEntry } = props;
   return (
     <TextInput
       value={value}
-      secureTextEntry={secureTextEntry || false}
+      secureTextEntry={secureTextEntry || EMPTY_BOOLEAN}
       onChangeText={(val) => setValue(val)}
       placeholder={placeholder}
       style={Styles.containerStyle}

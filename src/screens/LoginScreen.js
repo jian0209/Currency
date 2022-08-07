@@ -1,5 +1,12 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { Text, TouchableOpacity, View, Alert } from 'react-native';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { ButtonStyle } from '../styling/ButtonStyle';
 import { GlobalStyle } from '../styling/Global';
 import { BackIcon, ArrowRightIcon } from '../components/Icon';
@@ -9,12 +16,14 @@ import { TextStyle } from '../styling/TextStyle';
 import LinearGradient from 'react-native-linear-gradient';
 import color from '../styling/Color';
 import { UserStore } from '../stores/UserStore';
-import { v4 } from 'uuid';
+import { SettingStore } from '../stores/SettingStorage';
+import I18n from 'react-native-i18n';
 
 export default function CurrencyListScreen(props) {
   const { navigation } = props;
 
   const userData = UserStore.useState((s) => s.userData);
+  const defaultLanguage = SettingStore.useState((s) => s.language);
 
   const [showLogin, setShowLogin] = useState(true);
   const [showSignup, setShowSignup] = useState(false);
@@ -34,7 +43,7 @@ export default function CurrencyListScreen(props) {
         <TouchableOpacity
           style={ButtonStyle.headerLeftBtn}
           onPress={() => {
-            navigation.goBack();
+            navigation.navigate('GeneralSettings');
           }}>
           <BackIcon />
         </TouchableOpacity>
@@ -42,6 +51,13 @@ export default function CurrencyListScreen(props) {
       headerTitle: () => <View />,
     });
   }, [navigation]);
+
+  useEffect(() => {
+    navigation.navigate('Currency');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {}, [defaultLanguage]);
 
   const handleLogin = () => {
     let isValid = false;
@@ -55,44 +71,57 @@ export default function CurrencyListScreen(props) {
       }
     }
     if (loginParam.username === '' || loginParam.password === '') {
-      Alert.alert('Login Failed', 'Username or Password empty', [
+      Alert.alert(I18n.t('loginFailed'), I18n.t('loginFailedMsgUsername'), [
         // {
         //   text: 'Cancel',
         //   onPress: () => console.log('Cancel Pressed'),
         //   style: 'cancel',
         // },
-        { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
+        {
+          text: I18n.t('tryItAgain'),
+          onPress: () => console.log('OK Pressed'),
+        },
       ]);
       return;
     }
     if (isValid) {
       UserStore.update((s) => {
         s.userInfo = loginParam;
-        s.token = v4();
+        s.token = 'token';
       });
       navigation.navigate('GeneralSettings');
     } else {
-      Alert.alert('Login Failed', 'Invalid Username or Password', [
+      Alert.alert(I18n.t('loginFailed'), I18n.t('loginFailedMsgPassword'), [
         // {
         //   text: 'Cancel',
         //   onPress: () => console.log('Cancel Pressed'),
         //   style: 'cancel',
         // },
-        { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
+        {
+          text: I18n.t('tryItAgain'),
+          onPress: () => console.log('OK Pressed'),
+        },
       ]);
     }
   };
 
   const handleRegister = () => {
     if (signupParam.username === '' || signupParam.password === '') {
-      Alert.alert('Register Failed', 'Username or Password empty', [
-        // {
-        //   text: 'Cancel',
-        //   onPress: () => console.log('Cancel Pressed'),
-        //   style: 'cancel',
-        // },
-        { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
-      ]);
+      Alert.alert(
+        I18n.t('registerFailed'),
+        I18n.t('registerFailedMsgUsername'),
+        [
+          // {
+          //   text: 'Cancel',
+          //   onPress: () => console.log('Cancel Pressed'),
+          //   style: 'cancel',
+          // },
+          {
+            text: I18n.t('tryItAgain'),
+            onPress: () => console.log('OK Pressed'),
+          },
+        ]
+      );
       return;
     }
     if (signupParam.password === signupParam.confirmPassword) {
@@ -116,14 +145,28 @@ export default function CurrencyListScreen(props) {
         setShowLogin(true);
         setShowSignup(false);
       } else {
-        Alert.alert('Register Failed', 'Username already exist', [
-          { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
-        ]);
+        Alert.alert(
+          I18n.t('registerFailed'),
+          I18n.t('registerFailedMsgDuplicateUsername'),
+          [
+            {
+              text: I18n.t('tryItAgain'),
+              onPress: () => console.log('OK Pressed'),
+            },
+          ]
+        );
       }
     } else {
-      Alert.alert('Register Failed', 'Password does not match', [
-        { text: 'Try It Again', onPress: () => console.log('OK Pressed') },
-      ]);
+      Alert.alert(
+        I18n.t('registerFailed'),
+        I18n.t('registerFailedMsgPassword'),
+        [
+          {
+            text: I18n.t('tryItAgain'),
+            onPress: () => console.log('OK Pressed'),
+          },
+        ]
+      );
     }
   };
 
@@ -142,7 +185,7 @@ export default function CurrencyListScreen(props) {
                   ? TextStyle.isSelectedLogSignText
                   : TextStyle.logSignText
               }>
-              Log in
+              {I18n.t('login')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -156,18 +199,20 @@ export default function CurrencyListScreen(props) {
                   ? TextStyle.isSelectedLogSignText
                   : TextStyle.logSignText
               }>
-              Sign up
+              {I18n.t('signup')}
             </Text>
           </TouchableOpacity>
         </View>
         {showLogin && (
-          <View style={CardStyle.logSignTextInputCard}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={CardStyle.logTextInputCard}>
             <TextInputComp
               value={loginParam.username}
               setValue={(val) => {
                 setLoginParam({ ...loginParam, username: val });
               }}
-              placeholder={'Username'}
+              placeholder={I18n.t('username')}
             />
             <TextInputComp
               value={loginParam.password}
@@ -175,7 +220,7 @@ export default function CurrencyListScreen(props) {
               setValue={(val) => {
                 setLoginParam({ ...loginParam, password: val });
               }}
-              placeholder={'Password'}
+              placeholder={I18n.t('password')}
             />
             <View style={CardStyle.btnCard}>
               <TouchableOpacity
@@ -190,16 +235,18 @@ export default function CurrencyListScreen(props) {
                 </LinearGradient>
               </TouchableOpacity>
             </View>
-          </View>
+          </KeyboardAvoidingView>
         )}
         {showSignup && (
-          <View style={CardStyle.logSignTextInputCard}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={CardStyle.signTextInputCard}>
             <TextInputComp
               value={signupParam.username}
               setValue={(val) => {
                 setSignupParam({ ...signupParam, username: val });
               }}
-              placeholder={'Username'}
+              placeholder={I18n.t('username')}
             />
             <TextInputComp
               value={signupParam.password}
@@ -207,7 +254,7 @@ export default function CurrencyListScreen(props) {
               setValue={(val) => {
                 setSignupParam({ ...signupParam, password: val });
               }}
-              placeholder={'Password'}
+              placeholder={I18n.t('password')}
             />
             <TextInputComp
               value={signupParam.confirmPassword}
@@ -215,7 +262,7 @@ export default function CurrencyListScreen(props) {
               setValue={(val) => {
                 setSignupParam({ ...signupParam, confirmPassword: val });
               }}
-              placeholder={'Confirm Password'}
+              placeholder={I18n.t('confirmPassword')}
             />
             <View style={CardStyle.btnCard}>
               <TouchableOpacity
@@ -230,7 +277,7 @@ export default function CurrencyListScreen(props) {
                 </LinearGradient>
               </TouchableOpacity>
             </View>
-          </View>
+          </KeyboardAvoidingView>
         )}
       </View>
     </View>

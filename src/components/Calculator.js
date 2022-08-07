@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, Platform } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { CalculatorStyle } from '../styling/CalculatorStyle';
+import { EMPTY_NUMBER } from '../utils/constant';
+import I18n from 'react-native-i18n';
 
 export default function Calculator(props) {
   const {
@@ -14,6 +17,7 @@ export default function Calculator(props) {
     symbol,
     setSymbol,
   } = props;
+
   const [keyInCalculator, setKeyInCalculator] = useState([]);
   // const [newNumber, setNewNumber] = useState(0);
   // const [oldNumber, setOldNumber] = useState(0);
@@ -79,7 +83,7 @@ export default function Calculator(props) {
         value: '0',
       },
       {
-        key: 'Delete',
+        key: I18n.t('calculatorDelete'),
         value: 'DELETE',
       },
       {
@@ -109,7 +113,6 @@ export default function Calculator(props) {
     } else {
       setTotal(0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newNumber]);
 
   // re-init calculator
@@ -132,7 +135,7 @@ export default function Calculator(props) {
       // delete button
       let tempNum = newNumber.toString().split('');
       tempNum.pop();
-      setNewNumber(tempNum.join('') || 0);
+      setNewNumber(tempNum.join('') || EMPTY_NUMBER);
       if (newNumber === 0) {
         cleanCalculator();
       }
@@ -170,7 +173,13 @@ export default function Calculator(props) {
     return (
       <TouchableOpacity
         style={
-          isRounded ? CalculatorStyle.symbolButton : CalculatorStyle.button
+          Platform.OS === 'android' && isRounded
+            ? CalculatorStyle.adrSymbolBtn
+            : Platform.OS === 'android'
+            ? CalculatorStyle.adrBtn
+            : isRounded
+            ? CalculatorStyle.symbolButton
+            : CalculatorStyle.button
         }
         onLongPress={() => {
           if (item.value !== 'DELETE') {
@@ -187,7 +196,7 @@ export default function Calculator(props) {
   };
 
   return (
-    <View>
+    <>
       <FlatList
         style={CalculatorStyle.cont}
         scrollEnabled={false}
@@ -196,6 +205,6 @@ export default function Calculator(props) {
         renderItem={renderCalculator}
         keyExtractor={(item) => item.value}
       />
-    </View>
+    </>
   );
 }

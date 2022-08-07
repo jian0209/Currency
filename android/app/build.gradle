@@ -140,7 +140,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.exchange"
+        applicationId "com.matrixnetworking.currency.convertor"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -274,6 +274,7 @@ dependencies {
     }
 
     implementation project(':react-native-i18n')
+    implementation project(':react-native-languages')
 
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'

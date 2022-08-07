@@ -1,6 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Pressable,
+  FlatList,
+  Platform,
+} from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import LinearGradient from 'react-native-linear-gradient';
 import Calculator from '../components/Calculator';
@@ -13,6 +20,8 @@ import { getMultiCurrency } from '../api/Currency';
 import { SettingStore } from '../stores/SettingStorage';
 import { ArrowSwitchIcon, SettingIcon, RingIcon } from '../components/Icon';
 import { ButtonStyle } from '../styling/ButtonStyle';
+import { EMPTY_STRING } from '../utils/constant';
+import I18n from 'react-native-i18n';
 
 export default function CurrencyScreen(props) {
   const { navigation } = props;
@@ -30,6 +39,40 @@ export default function CurrencyScreen(props) {
   const [symbol, setSymbol] = useState('');
   const [isSelected, setIsSelected] = useState(selectedCurrency[0].name);
 
+  const MemoCalculator = React.memo(function CalculatorFunc() {
+    return (
+      <Calculator
+        total={total}
+        setTotal={(val) => {
+          CurrencyStore.update((s) => {
+            s.currencyDict[isSelected].amount = +val;
+          });
+          setTotal(val);
+        }}
+        newNumber={newNumber}
+        setNewNumber={(val) => {
+          CurrencyStore.update((s) => {
+            s.currencyDict[isSelected].amount = +val;
+          });
+          setNewNumber(val);
+        }}
+        oldNumber={oldNumber}
+        setOldNumber={(val) => {
+          if (val) {
+            CurrencyStore.update((s) => {
+              s.currencyDict[isSelected].amount = +val;
+            });
+          }
+          setOldNumber(val);
+        }}
+        symbol={symbol}
+        setSymbol={(val) => {
+          setSymbol(val);
+        }}
+      />
+    );
+  });
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -42,7 +85,9 @@ export default function CurrencyScreen(props) {
         // </TouchableOpacity>
         <View />
       ),
-      headerTitle: () => <Text style={TextStyle.mainText}>Currency</Text>,
+      headerTitle: () => (
+        <Text style={TextStyle.mainText}>{I18n.t('currency')}</Text>
+      ),
       headerRight: () => (
         <TouchableOpacity
           style={ButtonStyle.headerRightBtn}
@@ -54,10 +99,6 @@ export default function CurrencyScreen(props) {
       ),
     });
   }, [navigation]);
-
-  useEffect(() => {
-    console.log(defaultLegalDecimal);
-  }, [defaultLegalDecimal]);
 
   useEffect(() => {
     let tempTo = [];
@@ -80,7 +121,7 @@ export default function CurrencyScreen(props) {
           };
         } else {
           tempDict[key] = {
-            amount: tempDict[key].defaultAmount / defaultNumber,
+            amount: tempDict[key].defaultAmount * defaultNumber,
             defaultAmount: tempDict[key].defaultAmount,
           };
         }
@@ -126,10 +167,10 @@ export default function CurrencyScreen(props) {
     await getMultiCurrency(base, to).then((data) => {
       let tempDict = { ...currencyDict };
       tempDict[data.base] = { amount: 0, defaultAmount: defaultNumber };
-      for (const res in data.results) {
+      for (const res in data.rates) {
         tempDict[res] = {
-          amount: data.results[res] * defaultNumber,
-          defaultAmount: data.results[res],
+          amount: data.rates[res] * defaultNumber,
+          defaultAmount: data.rates[res],
         };
       }
       CurrencyStore.update((s) => {
@@ -145,7 +186,9 @@ export default function CurrencyScreen(props) {
         colors={[color.gradiantFromSwipeable, color.gradiantToSwipeable]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 1 }}>
-        <Text style={TextStyle.swipeableLeftText}>Switch Currency</Text>
+        <Text style={TextStyle.swipeableLeftText}>
+          {I18n.t('switchCurrency')}
+        </Text>
         <ArrowSwitchIcon />
       </LinearGradient>
     );
@@ -159,121 +202,103 @@ export default function CurrencyScreen(props) {
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 1 }}>
         <RingIcon />
-        <Text style={TextStyle.swipeableRightText}>Rate Details</Text>
+        <Text style={TextStyle.swipeableRightText}>
+          {I18n.t('rateDetails')}
+        </Text>
       </LinearGradient>
+    );
+  };
+
+  const renderSelectedCurrency = (item, index) => {
+    return (
+      <Swipeable
+        key={item.item.id}
+        ref={(ref) => (index = ref)}
+        renderLeftActions={showChangeCurrency}
+        renderRightActions={showRateDetails}
+        onSwipeableOpen={() => {
+          index.close();
+        }}
+        onSwipeableLeftWillOpen={() => {
+          navigation.navigate('CurrencyList', { item: item.item });
+          if (item.item.name === isSelected && item.item.id === 1) {
+            setIsSelected(selectedCurrency[+item.item.id].name);
+          } else if (item.item.name === isSelected) {
+            setIsSelected(selectedCurrency[+item.item.id - 2].name);
+          }
+        }}
+        onSwipeableRightWillOpen={() => {
+          navigation.navigate('CurrencyDetails', { item });
+        }}>
+        <Pressable
+          onPress={() => {
+            setOldNumber(0);
+            setNewNumber(0);
+            setSymbol('');
+            CurrencyStore.update((s) => {
+              s.currencyDict[isSelected].amount = 0;
+            });
+            setIsSelected(item.item.name);
+          }}
+          style={[
+            CardStyle.currencyCard,
+            item.item.name === isSelected ? CardStyle.selectedCard : null,
+          ]}>
+          <Text style={TextStyle.mainText}>{item.item.name}</Text>
+          <View>
+            <View style={GlobalStyle.endRow}>
+              {oldNumber && newNumber && isSelected === item.item.name ? (
+                <Text style={TextStyle.currencyText}>
+                  {oldNumber + ' ' + symbol + ' ' + newNumber + ' = '}
+                </Text>
+              ) : null}
+              {isSelected === item.item.name ? (
+                <Text numberOfLines={1} style={TextStyle.currencyText}>
+                  {currencyDict[item.item.name].amount && !total
+                    ? +currencyDict[item.item.name].amount.toFixed(4)
+                    : total
+                    ? +total.toFixed(4)
+                    : newNumber
+                    ? newNumber
+                    : oldNumber
+                    ? oldNumber
+                    : defaultNumber}
+                </Text>
+              ) : (
+                <Text style={TextStyle.currencyText}>
+                  {currencyDict[item.item.name] &&
+                  currencyDict[item.item.name].amount
+                    ? currencyDict[item.item.name].amount.toFixed(
+                        +defaultLegalDecimal.split('_')[0]
+                      )
+                    : currencyDict[item.item.name] &&
+                      currencyDict[item.item.name].defaultAmount
+                    ? currencyDict[item.item.name].defaultAmount
+                    : null}
+                </Text>
+              )}
+            </View>
+            <Text style={TextStyle.subText}>
+              {item.item.currency || EMPTY_STRING}
+            </Text>
+          </View>
+        </Pressable>
+      </Swipeable>
     );
   };
 
   return (
     <View style={GlobalStyle.container}>
-      {selectedCurrency.map((item, index, i) => {
-        return (
-          <View key={index}>
-            <Swipeable
-              ref={(ref) => (index = ref)}
-              renderLeftActions={showChangeCurrency}
-              renderRightActions={showRateDetails}
-              onSwipeableOpen={() => {
-                index.close();
-              }}
-              onSwipeableLeftWillOpen={() => {
-                navigation.navigate('CurrencyList', { item });
-                if (item.name === isSelected && item.id === 1) {
-                  setIsSelected(selectedCurrency[+item.id].name);
-                } else if (item.name === isSelected) {
-                  setIsSelected(selectedCurrency[+item.id - 2].name);
-                }
-              }}
-              onSwipeableRightWillOpen={() => {
-                navigation.navigate('CurrencyDetails', { item });
-              }}>
-              <TouchableOpacity
-                onPress={() => {
-                  setOldNumber(0);
-                  setNewNumber(0);
-                  setSymbol('');
-                  CurrencyStore.update((s) => {
-                    s.currencyDict[isSelected].amount = 0;
-                  });
-                  setIsSelected(item.name);
-                }}
-                style={[
-                  CardStyle.currencyCard,
-                  item.name === isSelected ? CardStyle.selectedCard : null,
-                ]}>
-                <View>
-                  {/*<Image source={image}/>*/}
-                  <Text style={TextStyle.mainText}>{item.name}</Text>
-                </View>
-                <View>
-                  <View style={GlobalStyle.endRow}>
-                    {oldNumber && newNumber && isSelected === item.name ? (
-                      <Text style={TextStyle.currencyText}>
-                        {oldNumber + ' ' + symbol + ' ' + newNumber + ' = '}
-                      </Text>
-                    ) : null}
-                    {isSelected === item.name ? (
-                      <Text numberOfLines={1} style={TextStyle.currencyText}>
-                        {currencyDict[item.name].amount && !total
-                          ? +currencyDict[item.name].amount.toFixed(4)
-                          : total
-                          ? +total.toFixed(4)
-                          : newNumber
-                          ? newNumber
-                          : oldNumber
-                          ? oldNumber
-                          : defaultNumber}
-                      </Text>
-                    ) : (
-                      <Text style={TextStyle.currencyText}>
-                        {currencyDict[item.name] &&
-                        currencyDict[item.name].amount
-                          ? currencyDict[item.name].amount.toFixed(
-                              +defaultLegalDecimal.split('_')[0]
-                            )
-                          : currencyDict[item.name] &&
-                            currencyDict[item.name].defaultAmount
-                          ? currencyDict[item.name].defaultAmount
-                          : null}
-                      </Text>
-                    )}
-                  </View>
-                  <Text style={TextStyle.subText}>{item.currency || ''}</Text>
-                </View>
-              </TouchableOpacity>
-            </Swipeable>
-          </View>
-        );
-      })}
-      <Calculator
-        total={total}
-        setTotal={(val) => {
-          CurrencyStore.update((s) => {
-            s.currencyDict[isSelected].amount = +val;
-          });
-          setTotal(val);
-        }}
-        newNumber={newNumber}
-        setNewNumber={(val) => {
-          CurrencyStore.update((s) => {
-            s.currencyDict[isSelected].amount = +val;
-          });
-          setNewNumber(val);
-        }}
-        oldNumber={oldNumber}
-        setOldNumber={(val) => {
-          if (val) {
-            CurrencyStore.update((s) => {
-              s.currencyDict[isSelected].amount = +val;
-            });
-          }
-          setOldNumber(val);
-        }}
-        symbol={symbol}
-        setSymbol={(val) => {
-          setSymbol(val);
-        }}
+      <FlatList
+        data={selectedCurrency}
+        renderItem={renderSelectedCurrency}
+        removeClippedSubviews={Platform.OS === 'android'}
+        initialNumToRender={1} // 首批渲染的元素数量
+        windowSize={3} // 渲染区域高度
+        maxToRenderPerBatch={10} // 增量渲染最大数量
+        updateCellsBatchingPeriod={50} // 增量渲染时间间隔
       />
+      <MemoCalculator />
     </View>
   );
 }

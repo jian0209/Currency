@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { SettingStore } from '../stores/SettingStorage';
 import color from '../styling/Color';
-import HomeScreen from '../screens/HomeScreen';
 import GeneralSettingsScreen from '../screens/GeneralSettingsScreen';
 import CurrencyScreen from '../screens/CurrencyScreen';
 import CurrencySettingsScreen from '../screens/CurrencySettingsScreen';
@@ -17,7 +16,7 @@ function MainNavigator() {
   const defaultScreen = SettingStore.useState((s) => s.defaultScreen);
   return (
     <Stack.Navigator
-      initialRouteName={defaultScreen}
+      initialRouteName={'Login'}
       gestureEnabled={false}
       screenOptions={{
         headerTitleStyle: {
@@ -31,9 +30,8 @@ function MainNavigator() {
           backgroundColor: color.primary,
         },
         headerShadowVisible: false,
-        gestureEnabled: false,
+        animationEnabled: false,
       }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Currency" component={CurrencyScreen} />
       <Stack.Screen name="GeneralSettings" component={GeneralSettingsScreen} />
       <Stack.Screen

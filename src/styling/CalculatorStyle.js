@@ -26,4 +26,18 @@ export const CalculatorStyle = StyleSheet.create({
     color: color.white,
     fontSize: 24,
   },
+  adrBtn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  adrSymbolBtn: {
+    backgroundColor: color.lightPrimaryColor,
+    borderRadius: 999,
+    margin: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: height * 0.06,
+    width: height * 0.06,
+  },
 });

@@ -19,10 +19,17 @@ export const ButtonStyle = StyleSheet.create({
     alignItems: 'center',
   },
   headerLeftBtn: {
-    marginLeft: 20,
+    paddingHorizontal: 10,
+    paddingLeft: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
   },
   headerRightBtn: {
-    marginRight: 20,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
   },
   loginBtn: {
     borderRadius: 999,

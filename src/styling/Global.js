@@ -26,6 +26,8 @@ export const GlobalStyle = StyleSheet.create({
     marginVertical: 5,
     borderRadius: 10,
     paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: color.primary,
   },
   testBorder: {
     borderWidth: 1,

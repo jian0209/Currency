@@ -65,4 +65,5 @@ export const CurrencyStore = new Store({
     },
   ],
   selectedCurrency: [],
+  updatedDate: '',
 });

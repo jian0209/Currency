@@ -77,11 +77,18 @@ export const CardStyle = StyleSheet.create({
     alignItems: 'center',
     marginVertical: height * 0.05,
   },
-  logSignTextInputCard: {
+  logTextInputCard: {
     backgroundColor: color.lightPrimaryColor,
     borderRadius: 10,
     paddingTop: height * 0.03,
-    paddingBottom: height * 0.05,
+    height: height * 0.28,
+    paddingHorizontal: width * 0.05,
+  },
+  signTextInputCard: {
+    backgroundColor: color.lightPrimaryColor,
+    borderRadius: 10,
+    paddingTop: height * 0.03,
+    height: height * 0.37,
     paddingHorizontal: width * 0.05,
   },
   btnCard: {
@@ -100,5 +107,17 @@ export const CardStyle = StyleSheet.create({
     borderBottomColor: color.white,
     paddingVertical: height * 0.01,
     paddingHorizontal: width * 0.1,
+  },
+  horizontalDateScrollCard: {
+    paddingVertical: height * 0.01,
+    width: width * 0.135,
+    alignItems: 'center',
+  },
+  selectedHorizontalDateScrollCard: {
+    borderBottomWidth: 1,
+    borderBottomColor: color.white,
+    paddingVertical: height * 0.01,
+    width: width * 0.135,
+    alignItems: 'center',
   },
 });

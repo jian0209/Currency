@@ -1,4 +1,4 @@
-package com.exchange;
+package com.matrixnetworking.currency.convertor;
 
 import android.app.Application;
 import android.content.Context;
@@ -13,6 +13,7 @@ import com.exchange.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
+import com.reactcommunity.rnlanguages.RNLanguagesPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

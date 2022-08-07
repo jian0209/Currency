@@ -1,4 +1,5 @@
 export default {
+  calculatorDelete: 'Delete',
   language: 'Language',
   accountSettingLogin: 'Login / Register',
   accountSetting: 'Account Setting',
@@ -8,7 +9,7 @@ export default {
   password: 'Password',
   confirmPassword: 'Confirm Password',
   conversionSetting: 'Conversion Setting',
-  lastUpdate: 'Last Updated Today',
+  lastUpdate: 'Last Update Today',
   defaultCurrency: 'Default Currency Value',
   decimalDigits: 'Set Decimal Digits',
   legalTender: 'Legal Tender',
@@ -29,5 +30,6 @@ export default {
   loginFailedMsgUsername: 'Username and password are required',
   loginFailedMsgPassword: 'Username or password is incorrect',
   tryItAgain: 'Try It Again',
+  loading: 'Loading...',
   //
 };

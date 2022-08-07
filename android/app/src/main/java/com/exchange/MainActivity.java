@@ -1,4 +1,4 @@
-package com.exchange;
+package com.matrixnetworking.currency.convertor;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
