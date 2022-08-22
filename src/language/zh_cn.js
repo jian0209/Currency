@@ -31,5 +31,20 @@ export default {
   loginFailedMsgPassword: '用户名或密码错误',
   tryItAgain: '重试',
   loading: '正在加载...',
+  monthlyAbbreviation: {
+    Jan: '一月',
+    Feb: '二月',
+    Mar: '三月',
+    Apr: '四月',
+    May: '五月',
+    Jun: '六月',
+    Jul: '七月',
+    Aug: '八月',
+    Sep: '九月',
+    Oct: '十月',
+    Nov: '十一月',
+    Dec: '十二月',
+  },
+  disconnect: '网络看似很不好，请再试一次。',
   //
 };

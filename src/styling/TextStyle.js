@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 import color from './Color';
-import { width } from './Global';
 
 export const TextStyle = StyleSheet.create({
   mainText: {
@@ -60,11 +59,26 @@ export const TextStyle = StyleSheet.create({
   isSelectedLogSignText: {
     color: color.white,
     fontSize: 20,
-    marginHorizontal: width * 0.1,
+    // marginHorizontal: width * 0.1,
   },
   logSignText: {
     color: color.gray,
     fontSize: 20,
-    marginHorizontal: width * 0.1,
+    // marginHorizontal: width * 0.1,
+  },
+  pointerItemText: {
+    color: color.white,
+    fontSize: 16,
+  },
+  logSignPlaceholderText: {
+    color: color.white,
+    fontSize: 14,
+    paddingLeft: 30,
+  },
+  centerText: {
+    textAlign: 'center',
+  },
+  calculatorDeleteText: {
+    fontSize: 12,
   },
 });

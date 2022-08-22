@@ -1,12 +1,5 @@
 import React, { useLayoutEffect, useState, useEffect } from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  View,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { Text, TouchableOpacity, View, Alert, Platform } from 'react-native';
 import { ButtonStyle } from '../styling/ButtonStyle';
 import { GlobalStyle } from '../styling/Global';
 import { BackIcon, ArrowRightIcon } from '../components/Icon';
@@ -53,7 +46,7 @@ export default function CurrencyListScreen(props) {
   }, [navigation]);
 
   useEffect(() => {
-    navigation.navigate('Currency');
+    // navigation.navigate('Currency');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -175,6 +168,7 @@ export default function CurrencyListScreen(props) {
       <View style={CardStyle.logSignMainCard}>
         <View style={CardStyle.logSignTextCard}>
           <TouchableOpacity
+            style={CardStyle.logSignTextBtnCard}
             onPress={() => {
               setShowLogin(true);
               setShowSignup(false);
@@ -189,6 +183,7 @@ export default function CurrencyListScreen(props) {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
+            style={CardStyle.logSignTextBtnCard}
             onPress={() => {
               setShowLogin(false);
               setShowSignup(true);
@@ -204,23 +199,31 @@ export default function CurrencyListScreen(props) {
           </TouchableOpacity>
         </View>
         {showLogin && (
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={CardStyle.logTextInputCard}>
+          <View style={CardStyle.logTextInputCard}>
+            {Platform.OS === 'android' && (
+              <Text style={TextStyle.logSignPlaceholderText}>
+                {I18n.t('username')}
+              </Text>
+            )}
             <TextInputComp
               value={loginParam.username}
               setValue={(val) => {
                 setLoginParam({ ...loginParam, username: val });
               }}
-              placeholder={I18n.t('username')}
+              placeholder={Platform.OS === 'ios' ? I18n.t('username') : ''}
             />
+            {Platform.OS === 'android' && (
+              <Text style={TextStyle.logSignPlaceholderText}>
+                {I18n.t('password')}
+              </Text>
+            )}
             <TextInputComp
               value={loginParam.password}
               secureTextEntry={true}
               setValue={(val) => {
                 setLoginParam({ ...loginParam, password: val });
               }}
-              placeholder={I18n.t('password')}
+              placeholder={Platform.OS === 'ios' ? I18n.t('password') : ''}
             />
             <View style={CardStyle.btnCard}>
               <TouchableOpacity
@@ -235,34 +238,49 @@ export default function CurrencyListScreen(props) {
                 </LinearGradient>
               </TouchableOpacity>
             </View>
-          </KeyboardAvoidingView>
+          </View>
         )}
         {showSignup && (
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={CardStyle.signTextInputCard}>
+          <View style={CardStyle.signTextInputCard}>
+            {Platform.OS === 'android' && (
+              <Text style={TextStyle.logSignPlaceholderText}>
+                {I18n.t('username')}
+              </Text>
+            )}
             <TextInputComp
               value={signupParam.username}
               setValue={(val) => {
                 setSignupParam({ ...signupParam, username: val });
               }}
-              placeholder={I18n.t('username')}
+              placeholder={Platform.OS === 'ios' ? I18n.t('username') : ''}
             />
+            {Platform.OS === 'android' && (
+              <Text style={TextStyle.logSignPlaceholderText}>
+                {I18n.t('password')}
+              </Text>
+            )}
             <TextInputComp
               value={signupParam.password}
               secureTextEntry={true}
               setValue={(val) => {
                 setSignupParam({ ...signupParam, password: val });
               }}
-              placeholder={I18n.t('password')}
+              placeholder={Platform.OS === 'ios' ? I18n.t('password') : ''}
             />
+            {Platform.OS === 'android' && (
+              <Text style={TextStyle.logSignPlaceholderText}>
+                {I18n.t('confirmPassword')}
+              </Text>
+            )}
             <TextInputComp
               value={signupParam.confirmPassword}
               secureTextEntry={true}
               setValue={(val) => {
                 setSignupParam({ ...signupParam, confirmPassword: val });
               }}
-              placeholder={I18n.t('confirmPassword')}
+              placeholder={
+                Platform.OS === 'ios' ? I18n.t('confirmPassword') : ''
+              }
             />
             <View style={CardStyle.btnCard}>
               <TouchableOpacity
@@ -277,7 +295,7 @@ export default function CurrencyListScreen(props) {
                 </LinearGradient>
               </TouchableOpacity>
             </View>
-          </KeyboardAvoidingView>
+          </View>
         )}
       </View>
     </View>

@@ -1,22 +1,20 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { SettingStore } from '../stores/SettingStorage';
 import color from '../styling/Color';
 import GeneralSettingsScreen from '../screens/GeneralSettingsScreen';
 import CurrencyScreen from '../screens/CurrencyScreen';
 import CurrencySettingsScreen from '../screens/CurrencySettingsScreen';
 import CurrencyListScreen from '../screens/CurrencyListScreen';
-import LoginScreen from '../screens/LoginScreen';
+// import LoginScreen from '../screens/LoginScreen';
 import CurrencyDetailsScreen from '../screens/CurrencyDetailsScreen';
 
 const Stack = createStackNavigator();
 
 function MainNavigator() {
-  const defaultScreen = SettingStore.useState((s) => s.defaultScreen);
   return (
     <Stack.Navigator
-      initialRouteName={'Login'}
+      initialRouteName={'CurrencySettings'}
       gestureEnabled={false}
       screenOptions={{
         headerTitleStyle: {
@@ -40,7 +38,7 @@ function MainNavigator() {
       />
       <Stack.Screen name="CurrencyList" component={CurrencyListScreen} />
       <Stack.Screen name="CurrencyDetails" component={CurrencyDetailsScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
+      {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
     </Stack.Navigator>
   );
 }

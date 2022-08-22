@@ -30,6 +30,7 @@ export const CalculatorStyle = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    height: height * 0.08,
   },
   adrSymbolBtn: {
     backgroundColor: color.lightPrimaryColor,
@@ -39,5 +40,9 @@ export const CalculatorStyle = StyleSheet.create({
     alignItems: 'center',
     height: height * 0.06,
     width: height * 0.06,
+  },
+  deleteText: {
+    fontSize: 20,
+    color: color.white,
   },
 });

@@ -1,20 +1,14 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { Pressable, Text, TouchableOpacity, View, Alert } from 'react-native';
+import React, { useLayoutEffect, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { GlobalStyle } from '../styling/Global';
 import { TextStyle } from '../styling/TextStyle';
 import { CardStyle } from '../styling/CardStyle';
 import { ButtonStyle } from '../styling/ButtonStyle';
-import {
-  DownIcon,
-  RightIcon,
-  BackIcon,
-  CheckIcon,
-  LoginUserIcon,
-} from '../components/Icon';
+import { DownIcon, RightIcon, BackIcon, CheckIcon } from '../components/Icon';
 import { SettingStore } from '../stores/SettingStorage';
-import { UserStore } from '../stores/UserStore';
 import { setLanguage } from '../stores/LocalStorage';
 import I18n from '../language/i18n';
+import { useEffect } from 'react';
 
 export default function GeneralSettingsScreen(props) {
   const { navigation } = props;
@@ -35,8 +29,6 @@ export default function GeneralSettingsScreen(props) {
   ];
 
   const defaultLanguage = SettingStore.useState((s) => s.language);
-  const token = UserStore.useState((s) => s.token);
-  const userInfo = UserStore.useState((s) => s.userInfo);
 
   const [showLanguage, setShowLanguage] = useState(false);
 
@@ -60,7 +52,7 @@ export default function GeneralSettingsScreen(props) {
 
   return (
     <View style={GlobalStyle.container}>
-      <Pressable
+      {/* <Pressable
         onPress={() => {
           if (!token) {
             navigation.navigate('Login');
@@ -87,7 +79,7 @@ export default function GeneralSettingsScreen(props) {
             : I18n.t('accountSettingLogin')}
         </Text>
         <LoginUserIcon />
-      </Pressable>
+      </Pressable> */}
       <View style={CardStyle.settingCard}>
         <TouchableOpacity
           onPress={() => {

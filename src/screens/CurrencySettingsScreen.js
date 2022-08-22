@@ -1,6 +1,5 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import moment from 'moment';
 import { GlobalStyle } from '../styling/Global';
 import { TextStyle } from '../styling/TextStyle';
 import { CardStyle } from '../styling/CardStyle';
@@ -18,6 +17,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { setCurrencyValue, setDecimal } from '../stores/LocalStorage';
 import { EMPTY_NUMBER } from '../utils/constant';
 import I18n from 'react-native-i18n';
+import moment from 'moment';
 
 export default function CurrencySettingsScreen(props) {
   const { navigation } = props;
@@ -64,6 +64,7 @@ export default function CurrencySettingsScreen(props) {
   const defaultCryptoDecimal = SettingStore.useState(
     (s) => s.defaultCryptoDecimal
   );
+  const defaultLanguage = SettingStore.useState((s) => s.language);
 
   const [showCurrencyValue, setShowCurrencyValue] = useState(false);
   const [showDecimal, setShowDecimal] = useState(false);
@@ -93,6 +94,13 @@ export default function CurrencySettingsScreen(props) {
       ),
     });
   }, [navigation]);
+
+  useEffect(() => {
+    navigation.navigate('Currency');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {}, [defaultLanguage]);
 
   const handleDecimalLegal = (val) => {
     let currentNumber = +defaultLegalDecimal.split('_')[0] || EMPTY_NUMBER;
@@ -144,7 +152,25 @@ export default function CurrencySettingsScreen(props) {
     <ScrollView style={GlobalStyle.container}>
       <View style={CardStyle.settingSubCard}>
         <Text style={TextStyle.settingSubText}>
-          {I18n.t('lastUpdate')} {updatedDate}
+          {I18n.t('lastUpdate')}{' '}
+          {I18n.currentLocale() === 'en'
+            ? moment(updatedDate * 1000)
+                .format('HH:mm, DD MMM')
+                .toString()
+            : moment(updatedDate * 1000)
+                .format('DD')
+                .toString() +
+              ' ' +
+              I18n.t(
+                'monthlyAbbreviation.' +
+                  moment(updatedDate * 1000)
+                    .format('MMM')
+                    .toString()
+              ) +
+              ', ' +
+              moment(updatedDate * 1000)
+                .format('HH:mm')
+                .toString()}
         </Text>
       </View>
       <View style={CardStyle.settingCard}>
@@ -161,7 +187,7 @@ export default function CurrencySettingsScreen(props) {
           </View>
           <Text style={TextStyle.settingDropDownText}>{defaultNumber}</Text>
         </TouchableOpacity>
-        {showCurrencyValue ? (
+        {showCurrencyValue && (
           <View style={CardStyle.settingDropDownCard}>
             {defaultValueArr.map((item, index) => {
               return (
@@ -188,7 +214,7 @@ export default function CurrencySettingsScreen(props) {
               );
             })}
           </View>
-        ) : null}
+        )}
         <TouchableOpacity
           onPress={() => {
             setShowDecimal(!showDecimal);
@@ -199,7 +225,7 @@ export default function CurrencySettingsScreen(props) {
             <Text style={TextStyle.settingText}>{I18n.t('decimalDigits')}</Text>
           </View>
         </TouchableOpacity>
-        {showDecimal ? (
+        {showDecimal && (
           <View style={CardStyle.settingDropDownCard}>
             <Text style={TextStyle.decimalLeftText}>
               {I18n.t('legalTender')}
@@ -258,7 +284,7 @@ export default function CurrencySettingsScreen(props) {
               </Text>
             </View>
           </View>
-        ) : null}
+        )}
       </View>
     </ScrollView>
   );

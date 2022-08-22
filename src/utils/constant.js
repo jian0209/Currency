@@ -6,7 +6,7 @@ export const EMPTY_BOOLEAN = false;
 
 export const DEFAULT_DECIMAL = '4_BITS';
 export const DEFAULT_SCREEN = 'login';
-export const DEFAUKT_NUMBER = 100;
+export const DEFAULT_NUMBER = 100;
 export const DEFAULT_SELECTED_CURRENCY = [
   'USD',
   'EUR',

@@ -44,9 +44,15 @@ export const GlobalStyle = StyleSheet.create({
   endRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    overflow: 'hidden',
+    maxWidth: width * 0.7,
   },
   squareOne: {
     height: height * 0.1,
     width: height * 0.1,
+  },
+  centerCont: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

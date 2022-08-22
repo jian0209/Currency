@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Image } from 'react-native';
+import { Image, View, Text } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Navigator from './src/router/Navigator';
 import { CurrencyStore } from './src/stores/CurrencyStore';
@@ -16,18 +16,21 @@ import { getCountryList, getMultiCurrency } from './src/api/Currency';
 import { SettingStore } from './src/stores/SettingStorage';
 import color from './src/styling/Color';
 import {
-  DEFAUKT_NUMBER,
+  DEFAULT_NUMBER,
   DEFAULT_DECIMAL,
   DEFAULT_SCREEN,
   DEFAULT_SELECTED_CURRENCY,
 } from './src/utils/constant';
 import I18n from './src/language/i18n';
-import { width } from './src/styling/Global';
+import { GlobalStyle, width } from './src/styling/Global';
 import RNLanguages from 'react-native-languages';
+import { TextStyle } from './src/styling/TextStyle';
+import ProgressBarAnimated from 'react-native-progress-bar-animated';
 
 const App = () => {
-  const language = SettingStore.useState((s) => s.language);
   const [isLoading, setIsLoading] = useState(false);
+  const [isNetworkLoading, setIsNetworkLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   // init settings
   useEffect(() => {
@@ -77,9 +80,13 @@ const App = () => {
       });
       await getCurrencyValue().then((item) => {
         SettingStore.update((s) => {
-          s.defaultNumber = item || DEFAUKT_NUMBER;
+          s.defaultNumber = item || DEFAULT_NUMBER;
         });
       });
+      setTimeout(() => {
+        setIsNetworkLoading(true);
+      }, 1000);
+      setProgress(5);
 
       // init selected currency
       let selectedCurrencyName;
@@ -89,18 +96,19 @@ const App = () => {
           s.selectedCurrencyName = item || DEFAULT_SELECTED_CURRENCY;
         });
       });
-
+      setProgress(25);
       // init country list
       let countryList = [];
       let countryDict = {};
       await getCountryList().then((data) => {
+        setProgress(30);
         for (const key in data) {
           countryList.push({
             code: key,
             country: data[key],
           });
         }
-
+        setProgress(45);
         countryList.sort((a, b) => {
           if (a.country < b.country) {
             return -1;
@@ -116,7 +124,7 @@ const App = () => {
           s.countryDict = data;
         });
       });
-
+      setProgress(57);
       // init selected currency
       let selectedCurrencyArr = [];
       let currencyDict = {};
@@ -125,6 +133,7 @@ const App = () => {
         selectedCurrencyName[0],
         selectedCurrencyName.slice(1, 6)
       ).then((data) => {
+        setProgress(75);
         selectedCurrencyArr.push({
           id: i,
           name: data.base,
@@ -143,6 +152,7 @@ const App = () => {
           });
           i++;
         }
+        setProgress(90);
         CurrencyStore.update((s) => {
           s.selectedCurrency = selectedCurrencyArr;
         });
@@ -153,25 +163,49 @@ const App = () => {
       CurrencyStore.update((s) => {
         s.currencyDict = currencyDict;
       });
+      setProgress(100);
     };
     initData()
-      .catch(console.error)
+      .catch((err) => {
+        console.log(err);
+      })
       .finally(() => {
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+        setTimeout(() => {
+          setIsNetworkLoading(false);
+        }, 3000);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return isLoading ? (
-    <Spinner
-      overlayColor={color.primary}
-      visible={true}
-      customIndicator={
-        <Image
-          style={{ width: width * 0.5, height: width * 0.5 }}
-          source={require('./src/assets/icon.png')}
+    isNetworkLoading ? (
+      <View style={[GlobalStyle.container, GlobalStyle.centerCont]}>
+        <ProgressBarAnimated
+          width={width * 0.8}
+          value={progress}
+          maxValue={100}
+          backgroundColor={color.red}
+          backgroundColorOnComplete={color.green}
         />
-      }
-    />
+        {/* eslint-disable-next-line react-native/no-inline-styles */}
+        <Text style={[TextStyle.mainText, { marginTop: 29 }]}>
+          {I18n.t('loading')}
+        </Text>
+      </View>
+    ) : (
+      <Spinner
+        overlayColor={color.primary}
+        visible={true}
+        animation={'fade'}
+        customIndicator={
+          <Image
+            style={{ width: width * 0.5, height: width * 0.5 }}
+            source={require('./src/assets/icon.png')}
+          />
+        }
+      />
+    )
   ) : (
     <Navigator />
   );

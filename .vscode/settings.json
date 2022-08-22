@@ -4,6 +4,7 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": ["source.fixAll.eslint"],
+  "editor.experimental.stickyScroll.enabled": true,
   "eslint.validate": ["javascript", "javascriptreact", "typescript"],
   "cSpell.words": ["becareful"]
 }

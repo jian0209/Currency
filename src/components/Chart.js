@@ -1,25 +1,25 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
+import { CardStyle } from '../styling/CardStyle';
 import color from '../styling/Color';
 import { width } from '../styling/Global';
+import { TextStyle } from '../styling/TextStyle';
 
-export default function Chart({ spacing, objData, to, maxValue }) {
+export default function Chart({ objData, to, maxValue, minValue }) {
   //   object to arr
   const arrData = Object.keys(objData.rates || {}).map((key) => {
     return {
       date: key,
       value: objData.rates[key][to] || 0,
+      defaultValue: objData.rates[key][to] || 0,
     };
   });
 
-  useEffect(() => {
-    console.log(maxValue);
-  }, [maxValue]);
-
   return (
     <View
+      // eslint-disable-next-line react-native/no-inline-styles
       style={{
         overflow: 'hidden',
         width: '100%',
@@ -34,10 +34,10 @@ export default function Chart({ spacing, objData, to, maxValue }) {
         gradientDirection={'vertical'}
         // line configuration
         data={arrData}
-        width={width * 0.76}
+        width={Platform.OS === 'ios' ? width * 0.76 : width * 0.83}
         hideDataPoints
-        maxValue={maxValue + 1 * maxValue}
-        spacing={15}
+        maxValue={maxValue - minValue}
+        yAxisOffset={minValue}
         initialSpacing={10}
         color={color.gradiantFromSwipeable}
         thickness={2}
@@ -45,46 +45,23 @@ export default function Chart({ spacing, objData, to, maxValue }) {
         showScrollIndicator={false}
         scrollToEnd={true}
         // height={height * 0.2}
-        noOfSections={10}
-        hideRules
+        adjustToWidth={true}
         yAxisSide={'right'}
         hideAxesAndRules={true}
         pointerConfig={{
           pointerStripColor: 'lightgray',
-          activatePointersDelay: 700,
           pointerStripWidth: 2,
           pointerColor: 'lightgray',
-          activatePointersOnLongPress: true,
           radius: 6,
           pointerLabelWidth: 100,
           pointerLabelHeight: 90,
           pointerLabelComponent: (items) => {
             return (
-              <View
-                style={{
-                  height: 90,
-                  width: 100,
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: 16,
-                    marginBottom: 6,
-                    textAlign: 'center',
-                  }}>
-                  {items[0].date}
-                </Text>
-
-                <View
-                  style={{
-                    paddingHorizontal: 14,
-                    paddingVertical: 6,
-                    borderRadius: 16,
-                    backgroundColor: 'white',
-                  }}>
-                  <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
-                    {+items[0].value.toFixed(4)}
+              <View style={CardStyle.pointerCard}>
+                <Text style={TextStyle.currencyText}>{items[0].date}</Text>
+                <View style={CardStyle.pointerItemCard}>
+                  <Text style={TextStyle.pointerItemText}>
+                    {+items[0].defaultValue.toFixed(4)}
                   </Text>
                 </View>
               </View>

@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, Platform } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import React, { useEffect } from 'react';
+import { Text, TouchableOpacity, Platform, View } from 'react-native';
 import { CalculatorStyle } from '../styling/CalculatorStyle';
 import { EMPTY_NUMBER } from '../utils/constant';
 import I18n from 'react-native-i18n';
+import { GlobalStyle } from '../styling/Global';
 
 export default function Calculator(props) {
   const {
@@ -17,81 +17,6 @@ export default function Calculator(props) {
     symbol,
     setSymbol,
   } = props;
-
-  const [keyInCalculator, setKeyInCalculator] = useState([]);
-  // const [newNumber, setNewNumber] = useState(0);
-  // const [oldNumber, setOldNumber] = useState(0);
-  // const [symbol, setSymbol] = useState('');
-
-  useEffect(() => {
-    // init calculator value
-    setKeyInCalculator([
-      {
-        key: 7,
-        value: '7',
-      },
-      {
-        key: 8,
-        value: '8',
-      },
-      {
-        key: 9,
-        value: '9',
-      },
-      {
-        key: '+',
-        value: '+',
-      },
-      {
-        key: 4,
-        value: '4',
-      },
-      {
-        key: 5,
-        value: '5',
-      },
-      {
-        key: 6,
-        value: '6',
-      },
-      {
-        key: '-',
-        value: '-',
-      },
-      {
-        key: 1,
-        value: '1',
-      },
-      {
-        key: 2,
-        value: '2',
-      },
-      {
-        key: 3,
-        value: '3',
-      },
-      {
-        key: 'x',
-        value: '*',
-      },
-      {
-        key: '.',
-        value: '.',
-      },
-      {
-        key: 0,
-        value: '0',
-      },
-      {
-        key: I18n.t('calculatorDelete'),
-        value: 'DELETE',
-      },
-      {
-        key: '÷',
-        value: '/',
-      },
-    ]);
-  }, []);
 
   useEffect(() => {
     // calculate number
@@ -110,7 +35,7 @@ export default function Calculator(props) {
           setTotal(+oldNumber / newNumber);
           break;
       }
-    } else {
+    } else if (symbol === '') {
       setTotal(0);
     }
   }, [newNumber]);
@@ -131,6 +56,10 @@ export default function Calculator(props) {
    */
   const calculate = (num) => {
     let checkSymbol = { '+': true, '-': true, '*': true, '/': true };
+    // check num length
+    if (newNumber.length > 9 && !['+', '-', '*', '/'].includes(num)) {
+      return;
+    }
     if (num === 'DELETE') {
       // delete button
       let tempNum = newNumber.toString().split('');
@@ -166,45 +95,201 @@ export default function Calculator(props) {
     }
   };
 
-  // render calculator
-  const renderCalculator = ({ item }) => {
-    let checkSymbol = { '+': true, '-': true, '*': true, '/': true };
-    let isRounded = checkSymbol[item.value];
-    return (
-      <TouchableOpacity
-        style={
-          Platform.OS === 'android' && isRounded
-            ? CalculatorStyle.adrSymbolBtn
-            : Platform.OS === 'android'
-            ? CalculatorStyle.adrBtn
-            : isRounded
-            ? CalculatorStyle.symbolButton
-            : CalculatorStyle.button
-        }
-        onLongPress={() => {
-          if (item.value !== 'DELETE') {
-            return;
-          }
-          cleanCalculator();
-        }}
-        onPress={() => {
-          calculate(item.value);
-        }}>
-        <Text style={CalculatorStyle.text}>{item.key}</Text>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <>
-      <FlatList
-        style={CalculatorStyle.cont}
-        scrollEnabled={false}
-        data={keyInCalculator}
-        numColumns={4}
-        renderItem={renderCalculator}
-        keyExtractor={(item) => item.value}
-      />
+      {/* first line */}
+      <View style={[GlobalStyle.row, CalculatorStyle.cont]}>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('7');
+          }}>
+          <Text style={CalculatorStyle.text}>7</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('8');
+          }}>
+          <Text style={CalculatorStyle.text}>8</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('9');
+          }}>
+          <Text style={CalculatorStyle.text}>9</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrSymbolBtn
+              : CalculatorStyle.symbolButton
+          }
+          onPress={() => {
+            calculate('+');
+          }}>
+          <Text style={CalculatorStyle.text}>+</Text>
+        </TouchableOpacity>
+      </View>
+      {/* second line */}
+      <View style={[GlobalStyle.row, CalculatorStyle.cont]}>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('4');
+          }}>
+          <Text style={CalculatorStyle.text}>4</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('5');
+          }}>
+          <Text style={CalculatorStyle.text}>5</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('6');
+          }}>
+          <Text style={CalculatorStyle.text}>6</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrSymbolBtn
+              : CalculatorStyle.symbolButton
+          }
+          onPress={() => {
+            calculate('-');
+          }}>
+          <Text style={CalculatorStyle.text}>-</Text>
+        </TouchableOpacity>
+      </View>
+      {/* third line */}
+      <View style={[GlobalStyle.row, CalculatorStyle.cont]}>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('1');
+          }}>
+          <Text style={CalculatorStyle.text}>1</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('2');
+          }}>
+          <Text style={CalculatorStyle.text}>2</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('3');
+          }}>
+          <Text style={CalculatorStyle.text}>3</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrSymbolBtn
+              : CalculatorStyle.symbolButton
+          }
+          onPress={() => {
+            calculate('*');
+          }}>
+          <Text style={CalculatorStyle.text}>x</Text>
+        </TouchableOpacity>
+      </View>
+      {/* fourth line */}
+      <View style={[GlobalStyle.row, CalculatorStyle.cont]}>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('.');
+          }}>
+          <Text style={CalculatorStyle.text}>.</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onPress={() => {
+            calculate('0');
+          }}>
+          <Text style={CalculatorStyle.text}>0</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrBtn
+              : CalculatorStyle.button
+          }
+          onLongPress={() => {
+            cleanCalculator();
+          }}
+          onPress={() => {
+            calculate('DELETE');
+          }}>
+          <Text style={CalculatorStyle.deleteText}>
+            {I18n.t('calculatorDelete')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={
+            Platform.OS === 'android'
+              ? CalculatorStyle.adrSymbolBtn
+              : CalculatorStyle.symbolButton
+          }
+          onPress={() => {
+            calculate('/');
+          }}>
+          <Text style={CalculatorStyle.text}>÷</Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 }

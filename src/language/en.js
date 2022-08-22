@@ -31,5 +31,20 @@ export default {
   loginFailedMsgPassword: 'Username or password is incorrect',
   tryItAgain: 'Try It Again',
   loading: 'Loading...',
+  monthlyAbbreviation: {
+    Jan: 'Jan',
+    Feb: 'Feb',
+    Mar: 'Mar',
+    Apr: 'Apr',
+    May: 'May',
+    Jun: 'Jun',
+    Jul: 'Jul',
+    Aug: 'Aug',
+    Sep: 'Sep',
+    Oct: 'Oct',
+    Nov: 'Nov',
+    Dec: 'Dec',
+  },
+  disconnect: 'Network unstable, please try again.',
   //
 };

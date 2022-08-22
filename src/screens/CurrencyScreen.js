@@ -1,13 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  View,
-  Pressable,
-  FlatList,
-  Platform,
-} from 'react-native';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useCallback,
+} from 'react';
+import { Text, TouchableOpacity, View, FlatList, Platform } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import LinearGradient from 'react-native-linear-gradient';
 import Calculator from '../components/Calculator';
@@ -22,6 +20,7 @@ import { ArrowSwitchIcon, SettingIcon, RingIcon } from '../components/Icon';
 import { ButtonStyle } from '../styling/ButtonStyle';
 import { EMPTY_STRING } from '../utils/constant';
 import I18n from 'react-native-i18n';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 export default function CurrencyScreen(props) {
   const { navigation } = props;
@@ -38,40 +37,8 @@ export default function CurrencyScreen(props) {
   const [oldNumber, setOldNumber] = useState(0);
   const [symbol, setSymbol] = useState('');
   const [isSelected, setIsSelected] = useState(selectedCurrency[0].name);
-
-  const MemoCalculator = React.memo(function CalculatorFunc() {
-    return (
-      <Calculator
-        total={total}
-        setTotal={(val) => {
-          CurrencyStore.update((s) => {
-            s.currencyDict[isSelected].amount = +val;
-          });
-          setTotal(val);
-        }}
-        newNumber={newNumber}
-        setNewNumber={(val) => {
-          CurrencyStore.update((s) => {
-            s.currencyDict[isSelected].amount = +val;
-          });
-          setNewNumber(val);
-        }}
-        oldNumber={oldNumber}
-        setOldNumber={(val) => {
-          if (val) {
-            CurrencyStore.update((s) => {
-              s.currencyDict[isSelected].amount = +val;
-            });
-          }
-          setOldNumber(val);
-        }}
-        symbol={symbol}
-        setSymbol={(val) => {
-          setSymbol(val);
-        }}
-      />
-    );
-  });
+  const [isDisconnected, setIsDisconnected] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -108,7 +75,7 @@ export default function CurrencyScreen(props) {
       }
     });
     changeCurrency(isSelected, tempTo);
-  }, [isSelected, defaultNumber]);
+  }, [isSelected, defaultNumber, selectedCurrency]);
 
   useEffect(() => {
     let tempDict = { ...currencyDict };
@@ -127,7 +94,7 @@ export default function CurrencyScreen(props) {
         }
       }
     }
-    if (total !== 0) {
+    if (total !== 0 || (symbol && newNumber)) {
       // use total number to convert currency
       for (const res in tempDict) {
         if (res !== isSelected) {
@@ -161,22 +128,53 @@ export default function CurrencyScreen(props) {
     CurrencyStore.update((s) => {
       s.currencyDict = tempDict;
     });
-  }, [total, newNumber]);
+  }, [newNumber, total]);
 
   const changeCurrency = async (base, to) => {
-    await getMultiCurrency(base, to).then((data) => {
-      let tempDict = { ...currencyDict };
-      tempDict[data.base] = { amount: 0, defaultAmount: defaultNumber };
-      for (const res in data.rates) {
-        tempDict[res] = {
-          amount: data.rates[res] * defaultNumber,
-          defaultAmount: data.rates[res],
+    setIsDisconnected(false);
+    await getMultiCurrency(base, to)
+      .then((data) => {
+        let tempDict = { ...currencyDict };
+        tempDict[data.base] = { amount: 0, defaultAmount: defaultNumber };
+        for (const res in data.rates) {
+          tempDict[res] = {
+            amount: data.rates[res] * defaultNumber,
+            defaultAmount: data.rates[res],
+          };
+        }
+        CurrencyStore.update((s) => {
+          s.currencyDict = tempDict;
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        let tempDict = { ...currencyDict };
+        tempDict.USD = { amount: 0, defaultAmount: defaultNumber };
+        tempDict.CAD = {
+          amount: 1.2838 * defaultNumber,
+          defaultAmount: 1.2838,
         };
-      }
-      CurrencyStore.update((s) => {
-        s.currencyDict = tempDict;
+        tempDict.EUR = {
+          amount: 0.98222 * defaultNumber,
+          defaultAmount: 0.98222,
+        };
+        tempDict.GBP = {
+          amount: 0.82734 * defaultNumber,
+          defaultAmount: 0.82734,
+        };
+        tempDict.JPY = {
+          amount: 133.4 * defaultNumber,
+          defaultAmount: 133.4,
+        };
+        tempDict.SGD = {
+          amount: 1.3787 * defaultNumber,
+          defaultAmount: 1.3787,
+        };
+        CurrencyStore.update((s) => {
+          s.currencyDict = tempDict;
+        });
+        setIsDisconnected(true);
       });
-    });
   };
 
   const showChangeCurrency = (progress, dragX) => {
@@ -209,82 +207,122 @@ export default function CurrencyScreen(props) {
     );
   };
 
-  const renderSelectedCurrency = (item, index) => {
-    return (
-      <Swipeable
-        key={item.item.id}
-        ref={(ref) => (index = ref)}
-        renderLeftActions={showChangeCurrency}
-        renderRightActions={showRateDetails}
-        onSwipeableOpen={() => {
-          index.close();
-        }}
-        onSwipeableLeftWillOpen={() => {
-          navigation.navigate('CurrencyList', { item: item.item });
-          if (item.item.name === isSelected && item.item.id === 1) {
-            setIsSelected(selectedCurrency[+item.item.id].name);
-          } else if (item.item.name === isSelected) {
-            setIsSelected(selectedCurrency[+item.item.id - 2].name);
-          }
-        }}
-        onSwipeableRightWillOpen={() => {
-          navigation.navigate('CurrencyDetails', { item });
-        }}>
-        <Pressable
-          onPress={() => {
-            setOldNumber(0);
-            setNewNumber(0);
-            setSymbol('');
-            CurrencyStore.update((s) => {
-              s.currencyDict[isSelected].amount = 0;
-            });
-            setIsSelected(item.item.name);
+  const renderSelectedCurrency = useCallback(
+    (item, index) => {
+      const swipeLeft = () => {
+        navigation.navigate('CurrencyList', { item: item.item });
+        if (item.item.name === isSelected && item.item.id === 1) {
+          setIsSelected(selectedCurrency[+item.item.id].name);
+        } else if (item.item.name === isSelected) {
+          setIsSelected(selectedCurrency[+item.item.id - 2].name);
+        }
+      };
+      const swipeRight = () => {
+        CurrencyStore.update((s) => {
+          s.currencyDetails = item.item;
+        });
+        navigation.navigate('CurrencyDetails');
+      };
+      return (
+        <Swipeable
+          key={item.item.id}
+          ref={(ref) => (index = ref)}
+          renderLeftActions={showChangeCurrency}
+          renderRightActions={showRateDetails}
+          onSwipeableOpen={() => {
+            index.close();
           }}
-          style={[
-            CardStyle.currencyCard,
-            item.item.name === isSelected ? CardStyle.selectedCard : null,
-          ]}>
-          <Text style={TextStyle.mainText}>{item.item.name}</Text>
-          <View>
-            <View style={GlobalStyle.endRow}>
-              {oldNumber && newNumber && isSelected === item.item.name ? (
-                <Text style={TextStyle.currencyText}>
-                  {oldNumber + ' ' + symbol + ' ' + newNumber + ' = '}
+          onSwipeableLeftWillOpen={swipeLeft}
+          onSwipeableRightWillOpen={swipeRight}>
+          <TouchableHighlight
+            underlayColor={color.primary}
+            onPress={() => {
+              setOldNumber(0);
+              setNewNumber(0);
+              setSymbol('');
+              CurrencyStore.update((s) => {
+                s.currencyDict[isSelected].amount = 0;
+              });
+              setIsSelected(item.item.name);
+            }}
+            style={[
+              CardStyle.currencyCard,
+              item.item.name === isSelected ? CardStyle.selectedCard : null,
+            ]}>
+            <>
+              <Text style={TextStyle.mainText}>{item.item.name}</Text>
+              <View>
+                <View style={GlobalStyle.endRow}>
+                  {oldNumber && newNumber && isSelected === item.item.name ? (
+                    <Text style={TextStyle.currencyText}>
+                      {oldNumber + ' ' + symbol + ' ' + newNumber + ' ='}&nbsp;
+                    </Text>
+                  ) : null}
+                  {isSelected === item.item.name ? (
+                    <Text numberOfLines={1} style={TextStyle.currencyText}>
+                      {total || (newNumber && oldNumber && !symbol)
+                        ? +total.toFixed(4)
+                        : total || (newNumber && oldNumber)
+                        ? +total.toFixed(4)
+                        : currencyDict[item.item.name].amount
+                        ? +currencyDict[item.item.name].amount.toFixed(4)
+                        : newNumber
+                        ? newNumber
+                        : oldNumber
+                        ? oldNumber
+                        : defaultNumber}
+                      {/* {currencyDict[item.item.name].amount && !total
+                        ? +currencyDict[item.item.name].amount.toFixed(4)
+                        : total
+                        ? +total.toFixed(4)
+                        : newNumber
+                        ? newNumber
+                        : oldNumber
+                        ? oldNumber
+                        : defaultNumber} */}
+                    </Text>
+                  ) : (
+                    <Text numberOfLines={1} style={TextStyle.currencyText}>
+                      {!total && newNumber && oldNumber
+                        ? parseFloat(+total).toFixed(
+                            +defaultLegalDecimal.split('_')[0]
+                          )
+                        : currencyDict[item.item.name] &&
+                          currencyDict[item.item.name].amount
+                        ? currencyDict[item.item.name].amount.toFixed(
+                            +defaultLegalDecimal.split('_')[0]
+                          )
+                        : currencyDict[item.item.name] &&
+                          currencyDict[item.item.name].defaultAmount
+                        ? currencyDict[item.item.name].defaultAmount
+                        : null}
+                    </Text>
+                  )}
+                </View>
+                <Text style={TextStyle.subText}>
+                  {item.item.currency || EMPTY_STRING}
                 </Text>
-              ) : null}
-              {isSelected === item.item.name ? (
-                <Text numberOfLines={1} style={TextStyle.currencyText}>
-                  {currencyDict[item.item.name].amount && !total
-                    ? +currencyDict[item.item.name].amount.toFixed(4)
-                    : total
-                    ? +total.toFixed(4)
-                    : newNumber
-                    ? newNumber
-                    : oldNumber
-                    ? oldNumber
-                    : defaultNumber}
-                </Text>
-              ) : (
-                <Text style={TextStyle.currencyText}>
-                  {currencyDict[item.item.name] &&
-                  currencyDict[item.item.name].amount
-                    ? currencyDict[item.item.name].amount.toFixed(
-                        +defaultLegalDecimal.split('_')[0]
-                      )
-                    : currencyDict[item.item.name] &&
-                      currencyDict[item.item.name].defaultAmount
-                    ? currencyDict[item.item.name].defaultAmount
-                    : null}
-                </Text>
-              )}
-            </View>
-            <Text style={TextStyle.subText}>
-              {item.item.currency || EMPTY_STRING}
-            </Text>
-          </View>
-        </Pressable>
-      </Swipeable>
-    );
+              </View>
+            </>
+          </TouchableHighlight>
+        </Swipeable>
+      );
+    },
+    [currencyDict]
+  );
+
+  const keyExtractor = useCallback((item) => item.id.toString(), []);
+
+  const onRefreshCurrency = async () => {
+    setIsRefreshing(true);
+    let tempTo = [];
+    selectedCurrency.forEach((item, index) => {
+      if (item.name !== isSelected) {
+        tempTo.push(item.name);
+      }
+    });
+    await changeCurrency(isSelected, tempTo);
+    setIsRefreshing(false);
   };
 
   return (
@@ -292,13 +330,50 @@ export default function CurrencyScreen(props) {
       <FlatList
         data={selectedCurrency}
         renderItem={renderSelectedCurrency}
+        keyExtractor={keyExtractor}
         removeClippedSubviews={Platform.OS === 'android'}
         initialNumToRender={1} // 首批渲染的元素数量
         windowSize={3} // 渲染区域高度
-        maxToRenderPerBatch={10} // 增量渲染最大数量
+        maxToRenderPerBatch={3} // 增量渲染最大数量
         updateCellsBatchingPeriod={50} // 增量渲染时间间隔
+        onRefresh={onRefreshCurrency}
+        refreshing={isRefreshing}
       />
-      <MemoCalculator />
+      {isDisconnected && (
+        <Text style={[TextStyle.mainText, TextStyle.centerText]}>
+          {I18n.t('disconnect')}
+        </Text>
+      )}
+      <Calculator
+        total={total}
+        setTotal={(val) => {
+          setTotal(defaultNumber);
+          CurrencyStore.update((s) => {
+            s.currencyDict[isSelected].amount = +val;
+          });
+          setTotal(val);
+        }}
+        newNumber={newNumber}
+        setNewNumber={(val) => {
+          CurrencyStore.update((s) => {
+            s.currencyDict[isSelected].amount = +val;
+          });
+          setNewNumber(val);
+        }}
+        oldNumber={oldNumber}
+        setOldNumber={(val) => {
+          if (val) {
+            CurrencyStore.update((s) => {
+              s.currencyDict[isSelected].amount = +val;
+            });
+          }
+          setOldNumber(val);
+        }}
+        symbol={symbol}
+        setSymbol={(val) => {
+          setSymbol(val);
+        }}
+      />
     </View>
   );
 }

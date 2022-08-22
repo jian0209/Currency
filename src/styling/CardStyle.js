@@ -81,15 +81,15 @@ export const CardStyle = StyleSheet.create({
     backgroundColor: color.lightPrimaryColor,
     borderRadius: 10,
     paddingTop: height * 0.03,
-    height: height * 0.28,
     paddingHorizontal: width * 0.05,
+    paddingBottom: height * 0.05,
   },
   signTextInputCard: {
     backgroundColor: color.lightPrimaryColor,
     borderRadius: 10,
     paddingTop: height * 0.03,
-    height: height * 0.37,
     paddingHorizontal: width * 0.05,
+    paddingBottom: height * 0.05,
   },
   btnCard: {
     position: 'absolute',
@@ -119,5 +119,20 @@ export const CardStyle = StyleSheet.create({
     paddingVertical: height * 0.01,
     width: width * 0.135,
     alignItems: 'center',
+  },
+  pointerCard: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pointerItemCard: {
+    paddingVertical: height * 0.01,
+    paddingHorizontal: height * 0.01,
+    borderRadius: 10,
+    backgroundColor: color.gradiantToSwipeable,
+  },
+  logSignTextBtnCard: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: height * 0.01,
   },
 });
