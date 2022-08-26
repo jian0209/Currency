@@ -157,17 +157,17 @@ export default function CurrencySettingsScreen(props) {
             ? moment(updatedDate * 1000)
                 .format('HH:mm, DD MMM')
                 .toString()
-            : moment(updatedDate * 1000)
-                .format('DD')
-                .toString() +
-              ' ' +
-              I18n.t(
+            : I18n.t(
                 'monthlyAbbreviation.' +
                   moment(updatedDate * 1000)
                     .format('MMM')
                     .toString()
               ) +
-              ', ' +
+              ' ' +
+              moment(updatedDate * 1000)
+                .format('DD')
+                .toString() +
+              '日, ' +
               moment(updatedDate * 1000)
                 .format('HH:mm')
                 .toString()}

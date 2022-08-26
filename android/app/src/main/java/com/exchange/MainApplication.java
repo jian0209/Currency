@@ -1,4 +1,4 @@
-package com.matrixnetworking.currency.convertor;
+package com.matrixnetworking.currency.converter;
 
 import android.app.Application;
 import android.content.Context;

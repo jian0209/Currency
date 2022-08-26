@@ -19,7 +19,7 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.matrixnetworking.currency.convertor.BuildConfig;
+import com.matrixnetworking.currency.converter.BuildConfig;
 import com.exchange.newarchitecture.components.MainComponentsRegistry;
 import com.exchange.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;

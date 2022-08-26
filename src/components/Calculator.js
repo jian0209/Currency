@@ -235,7 +235,7 @@ export default function Calculator(props) {
           onPress={() => {
             calculate('*');
           }}>
-          <Text style={CalculatorStyle.text}>x</Text>
+          <Text style={CalculatorStyle.text}>×</Text>
         </TouchableOpacity>
       </View>
       {/* fourth line */}

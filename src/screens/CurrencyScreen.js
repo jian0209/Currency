@@ -21,6 +21,7 @@ import { ButtonStyle } from '../styling/ButtonStyle';
 import { EMPTY_STRING } from '../utils/constant';
 import I18n from 'react-native-i18n';
 import { TouchableHighlight } from 'react-native-gesture-handler';
+import { ToThousands } from '../utils/filter';
 
 export default function CurrencyScreen(props) {
   const { navigation } = props;
@@ -255,22 +256,30 @@ export default function CurrencyScreen(props) {
                 <View style={GlobalStyle.endRow}>
                   {oldNumber && newNumber && isSelected === item.item.name ? (
                     <Text style={TextStyle.currencyText}>
-                      {oldNumber + ' ' + symbol + ' ' + newNumber + ' ='}&nbsp;
+                      {ToThousands(oldNumber) +
+                        ' ' +
+                        symbol +
+                        ' ' +
+                        ToThousands(newNumber) +
+                        ' ='}
+                      &nbsp;
                     </Text>
                   ) : null}
                   {isSelected === item.item.name ? (
                     <Text numberOfLines={1} style={TextStyle.currencyText}>
                       {total || (newNumber && oldNumber && !symbol)
-                        ? +total.toFixed(4)
+                        ? ToThousands(+total.toFixed(4))
                         : total || (newNumber && oldNumber)
-                        ? +total.toFixed(4)
+                        ? ToThousands(+total.toFixed(4))
                         : currencyDict[item.item.name].amount
-                        ? +currencyDict[item.item.name].amount.toFixed(4)
+                        ? ToThousands(
+                            +currencyDict[item.item.name].amount.toFixed(4)
+                          )
                         : newNumber
-                        ? newNumber
+                        ? ToThousands(newNumber)
                         : oldNumber
-                        ? oldNumber
-                        : defaultNumber}
+                        ? ToThousands(oldNumber)
+                        : ToThousands(defaultNumber)}
                       {/* {currencyDict[item.item.name].amount && !total
                         ? +currencyDict[item.item.name].amount.toFixed(4)
                         : total
@@ -284,17 +293,23 @@ export default function CurrencyScreen(props) {
                   ) : (
                     <Text numberOfLines={1} style={TextStyle.currencyText}>
                       {!total && newNumber && oldNumber
-                        ? parseFloat(+total).toFixed(
-                            +defaultLegalDecimal.split('_')[0]
+                        ? ToThousands(
+                            parseFloat(+total).toFixed(
+                              +defaultLegalDecimal.split('_')[0]
+                            )
                           )
                         : currencyDict[item.item.name] &&
                           currencyDict[item.item.name].amount
-                        ? currencyDict[item.item.name].amount.toFixed(
-                            +defaultLegalDecimal.split('_')[0]
+                        ? ToThousands(
+                            currencyDict[item.item.name].amount.toFixed(
+                              +defaultLegalDecimal.split('_')[0]
+                            )
                           )
                         : currencyDict[item.item.name] &&
                           currencyDict[item.item.name].defaultAmount
-                        ? currencyDict[item.item.name].defaultAmount
+                        ? ToThousands(
+                            currencyDict[item.item.name].defaultAmount
+                          )
                         : null}
                     </Text>
                   )}
