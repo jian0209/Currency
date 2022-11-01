@@ -6,4 +6,5 @@ export const SettingStore = new Store({
   defaultLegalDecimal: '4_BITS',
   defaultCryptoDecimal: '4_BITS',
   defaultNumber: 100,
+  isCrypto: false,
 });

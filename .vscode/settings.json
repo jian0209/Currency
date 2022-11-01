@@ -3,8 +3,12 @@
   "editor.guides.bracketPairs": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": ["source.fixAll.eslint"],
-  "editor.experimental.stickyScroll.enabled": true,
+  "editor.codeActionsOnSave": [
+    "source.fixAll.eslint"
+  ],
   "eslint.validate": ["javascript", "javascriptreact", "typescript"],
-  "cSpell.words": ["becareful"]
+  "cSpell.words": [
+    "becareful"
+  ],
+  "editor.stickyScroll.enabled": true
 }

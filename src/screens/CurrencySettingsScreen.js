@@ -14,7 +14,11 @@ import {
   UserIcon,
 } from '../components/Icon';
 import { ScrollView } from 'react-native-gesture-handler';
-import { setCurrencyValue, setDecimal } from '../stores/LocalStorage';
+import {
+  setCurrencyValue,
+  setDecimal,
+  setCryptoDecimal,
+} from '../stores/LocalStorage';
 import { EMPTY_NUMBER } from '../utils/constant';
 import I18n from 'react-native-i18n';
 import moment from 'moment';
@@ -65,6 +69,7 @@ export default function CurrencySettingsScreen(props) {
     (s) => s.defaultCryptoDecimal
   );
   const defaultLanguage = SettingStore.useState((s) => s.language);
+  const isCrypto = SettingStore.useState((s) => s.isCrypto);
 
   const [showCurrencyValue, setShowCurrencyValue] = useState(false);
   const [showDecimal, setShowDecimal] = useState(false);
@@ -75,7 +80,11 @@ export default function CurrencySettingsScreen(props) {
         <TouchableOpacity
           style={ButtonStyle.headerLeftBtn}
           onPress={() => {
-            navigation.navigate('Currency');
+            if (isCrypto) {
+              navigation.navigate('Crypto');
+            } else {
+              navigation.navigate('Currency');
+            }
           }}>
           <BackIcon />
         </TouchableOpacity>
@@ -93,14 +102,7 @@ export default function CurrencySettingsScreen(props) {
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
-
-  useEffect(() => {
-    navigation.navigate('Currency');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {}, [defaultLanguage]);
+  }, [navigation, isCrypto]);
 
   const handleDecimalLegal = (val) => {
     let currentNumber = +defaultLegalDecimal.split('_')[0] || EMPTY_NUMBER;
@@ -135,6 +137,7 @@ export default function CurrencySettingsScreen(props) {
           s.defaultCryptoDecimal =
             decimalCryptoList[cryptoDict[currentNumber]].value;
         });
+        setCryptoDecimal(decimalCryptoList[currentNumber / 2].value);
       }
     } else {
       // sub decimal
@@ -144,6 +147,7 @@ export default function CurrencySettingsScreen(props) {
           s.defaultCryptoDecimal =
             decimalCryptoList[cryptoDict[currentNumber]].value;
         });
+        setCryptoDecimal(decimalCryptoList[currentNumber / 2].value);
       }
     }
   };

@@ -38,4 +38,9 @@ export const ButtonStyle = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  listBtn: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

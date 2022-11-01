@@ -2,9 +2,13 @@ import { Store } from 'pullstate';
 
 export const CurrencyStore = new Store({
   currencyDict: {},
+  cryptoDict: {},
   selectedCurrencyName: ['USD', 'EUR', 'JPY', 'GBP', 'SGD', 'CAD'],
+  selectedCryptoName: ['BTC', 'ETH', 'USD', 'BCH', 'EUR', 'SGD'],
   countryArr: [],
   countryDict: {},
+  cryptoCoinArr: [],
+  cryptoCoinDict: {},
   decimalLegalList: [
     {
       key: 'None',
@@ -65,6 +69,8 @@ export const CurrencyStore = new Store({
     },
   ],
   selectedCurrency: [],
+  selectedCrypto: [],
   updatedDate: '',
   currencyDetails: {},
+  cryptoDetails: {},
 });

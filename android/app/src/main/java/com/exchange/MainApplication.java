@@ -1,4 +1,4 @@
-package com.matrixnetworking.currency.converter;
+package com.matrixnetworking.currency.convertor;
 
 import android.app.Application;
 import android.content.Context;
@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.reactcommunity.rnlanguages.RNLanguagesPackage;
+import com.proyecto26.inappbrowser.RNInAppBrowserPackage;
+import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

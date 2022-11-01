@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { GlobalStyle } from '../styling/Global';
 import { TextStyle } from '../styling/TextStyle';
@@ -8,7 +8,6 @@ import { DownIcon, RightIcon, BackIcon, CheckIcon } from '../components/Icon';
 import { SettingStore } from '../stores/SettingStorage';
 import { setLanguage } from '../stores/LocalStorage';
 import I18n from '../language/i18n';
-import { useEffect } from 'react';
 
 export default function GeneralSettingsScreen(props) {
   const { navigation } = props;
@@ -31,6 +30,7 @@ export default function GeneralSettingsScreen(props) {
   const defaultLanguage = SettingStore.useState((s) => s.language);
 
   const [showLanguage, setShowLanguage] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -124,6 +124,38 @@ export default function GeneralSettingsScreen(props) {
               </TouchableOpacity>
             </View>
           ))}
+        <TouchableOpacity
+          onPress={() => {
+            setShowPrivacy(!showPrivacy);
+          }}
+          style={CardStyle.insideSettingCard}>
+          <View style={CardStyle.settingMainLeftCard}>
+            {showPrivacy ? <DownIcon /> : <RightIcon />}
+            <Text style={TextStyle.settingText}>{I18n.t('termPrivacy')}</Text>
+          </View>
+        </TouchableOpacity>
+        {showPrivacy && (
+          <View style={CardStyle.settingDropDownCard}>
+            <TouchableOpacity
+              style={CardStyle.settingDropDownInsideCard}
+              onPress={() => {
+                navigation.navigate('Term');
+              }}>
+              <Text style={TextStyle.settingDropDownText}>
+                {I18n.t('term')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={CardStyle.settingDropDownInsideCard}
+              onPress={() => {
+                navigation.navigate('Privacy');
+              }}>
+              <Text style={TextStyle.settingDropDownText}>
+                {I18n.t('privacy')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );

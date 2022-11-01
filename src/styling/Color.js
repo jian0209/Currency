@@ -8,8 +8,8 @@ const color = {
   gray: '#999999',
   gradiantFromBtn: '#b95fc5',
   gradiantToBtn: '#8660e1',
-  gradiantFromSwipeable: '#fb5d9e',
-  gradiantToSwipeable: '#5863fd',
+  gradientFromSwipeable: '#fb5d9e',
+  gradientToSwipeable: '#5863fd',
 };
 
 export default color;

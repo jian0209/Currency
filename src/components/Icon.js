@@ -4,6 +4,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import color from '../styling/Color';
 
 export const NavigateNext = () => {
@@ -61,4 +62,8 @@ export const RingIcon = () => {
       size={20}
     />
   );
+};
+
+export const BitcoinIcon = () => {
+  return <FontAwesome name="bitcoin" color={color.white} size={20} />;
 };

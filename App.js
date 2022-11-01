@@ -11,8 +11,11 @@ import {
   getDecimal,
   getFirstScreen,
   getLanguage,
+  getCrypto,
 } from './src/stores/LocalStorage';
 import { getCountryList, getMultiCurrency } from './src/api/Currency';
+import { getCryptoList, getMultiCrypto } from './src/api/Crypto';
+import { getBannerList } from './src/api/Banner';
 import { SettingStore } from './src/stores/SettingStorage';
 import color from './src/styling/Color';
 import {
@@ -20,6 +23,7 @@ import {
   DEFAULT_DECIMAL,
   DEFAULT_SCREEN,
   DEFAULT_SELECTED_CURRENCY,
+  DEFAULT_SELECTED_CRYPTO,
 } from './src/utils/constant';
 import I18n from './src/language/i18n';
 import { GlobalStyle, width } from './src/styling/Global';
@@ -36,6 +40,7 @@ const App = () => {
   useEffect(() => {
     setIsLoading(true);
     const initData = async () => {
+      await getBannerList();
       // init settings
       await getDecimal().then((item) => {
         SettingStore.update((s) => {
@@ -96,10 +101,42 @@ const App = () => {
           s.selectedCurrencyName = item || DEFAULT_SELECTED_CURRENCY;
         });
       });
+      let selectedCryptoName;
+      await getCrypto().then((item) => {
+        selectedCryptoName = item || DEFAULT_SELECTED_CRYPTO;
+        CurrencyStore.update((s) => {
+          s.selectedCryptoName = item || DEFAULT_SELECTED_CRYPTO;
+        });
+      });
       setProgress(25);
       // init country list
       let countryList = [];
       let countryDict = {};
+      let cryptoCoinList = [];
+      let cryptoCoinDict = {};
+      await getCryptoList().then((data) => {
+        // console.log(data);
+        data.forEach((item) => {
+          cryptoCoinList.push({
+            code: item.CoinInfo.Name,
+            country: item.CoinInfo.FullName,
+          });
+          cryptoCoinList.sort((a, b) => {
+            if (a.country < b.country) {
+              return -1;
+            }
+            if (a.country > b.country) {
+              return 1;
+            }
+            return 0;
+          });
+          cryptoCoinDict[item.CoinInfo.Name] = item.CoinInfo.FullName;
+        });
+        CurrencyStore.update((s) => {
+          s.cryptoCoinArr = cryptoCoinList;
+          s.cryptoCoinDict = cryptoCoinDict;
+        });
+      });
       await getCountryList().then((data) => {
         setProgress(30);
         for (const key in data) {
@@ -123,6 +160,42 @@ const App = () => {
           s.countryArr = countryList;
           s.countryDict = data;
         });
+      });
+      // init selected crypto
+      let selectedCryptoArr = [];
+      let cryptoDict = {};
+      let j = 1;
+      await getMultiCrypto(
+        selectedCryptoName[0],
+        selectedCryptoName.slice(1, 6)
+      ).then((data) => {
+        selectedCryptoArr.push({
+          id: j,
+          name: Object.keys(data)[0],
+          currency: cryptoCoinDict[Object.keys(data)[0]],
+          amount: 1,
+          isSelected: true,
+        });
+        j++;
+        for (const res in data[Object.keys(data)[0]]) {
+          selectedCryptoArr.push({
+            id: j,
+            name: res,
+            currency: cryptoCoinDict[res] || countryDict[res],
+            amount: data[Object.keys(data)[0]][res],
+            isSelected: false,
+          });
+          j++;
+        }
+        CurrencyStore.update((s) => {
+          s.selectedCrypto = selectedCryptoArr;
+        });
+      });
+      selectedCryptoArr.forEach((item) => {
+        cryptoDict[item.name] = { amount: 0, defaultAmount: item.amount };
+      });
+      CurrencyStore.update((s) => {
+        s.cryptoDict = cryptoDict;
       });
       setProgress(57);
       // init selected currency

@@ -5,7 +5,16 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { Text, TouchableOpacity, View, FlatList, Platform } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  FlatList,
+  Platform,
+  Alert,
+  Linking,
+  Image,
+} from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import LinearGradient from 'react-native-linear-gradient';
 import Calculator from '../components/Calculator';
@@ -16,15 +25,25 @@ import { CardStyle } from '../styling/CardStyle';
 import { GlobalStyle } from '../styling/Global';
 import { getMultiCurrency } from '../api/Currency';
 import { SettingStore } from '../stores/SettingStorage';
-import { ArrowSwitchIcon, SettingIcon, RingIcon } from '../components/Icon';
+import {
+  ArrowSwitchIcon,
+  SettingIcon,
+  RingIcon,
+  BitcoinIcon,
+} from '../components/Icon';
 import { ButtonStyle } from '../styling/ButtonStyle';
 import { EMPTY_STRING } from '../utils/constant';
 import I18n from 'react-native-i18n';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { ToThousands } from '../utils/filter';
+import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+import BetterBanner from 'react-native-better-banner';
+import { BannerStore } from '../stores/BannerStore';
 
 export default function CurrencyScreen(props) {
   const { navigation } = props;
+
+  const bannerList = BannerStore.useState((s) => s.bannerList);
 
   const currencyDict = CurrencyStore.useState((s) => s.currencyDict);
   const selectedCurrency = CurrencyStore.useState((s) => s.selectedCurrency);
@@ -44,14 +63,14 @@ export default function CurrencyScreen(props) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        // <TouchableOpacity
-        //   style={ButtonStyle.headerLeftBtn}
-        //   onPress={() => {
-        //     navigation.navigate('Home');
-        //   }}>
-        //   <BackIcon />
-        // </TouchableOpacity>
-        <View />
+        <TouchableOpacity
+          style={ButtonStyle.headerLeftBtn}
+          onPress={() => {
+            navigation.navigate('Crypto');
+          }}>
+          <BitcoinIcon />
+        </TouchableOpacity>
+        // <View />
       ),
       headerTitle: () => (
         <Text style={TextStyle.mainText}>{I18n.t('currency')}</Text>
@@ -60,6 +79,9 @@ export default function CurrencyScreen(props) {
         <TouchableOpacity
           style={ButtonStyle.headerRightBtn}
           onPress={() => {
+            SettingStore.update((s) => {
+              s.isCrypto = false;
+            });
             navigation.navigate('CurrencySettings');
           }}>
           <SettingIcon />
@@ -178,11 +200,54 @@ export default function CurrencyScreen(props) {
       });
   };
 
+  const inAppBrowser = async () => {
+    try {
+      const url = 'https://github.com/proyecto26';
+      if (await InAppBrowser.isAvailable()) {
+        const result = await InAppBrowser.open(url, {
+          // iOS Properties
+          dismissButtonStyle: 'cancel',
+          preferredBarTintColor: color.primary,
+          preferredControlTintColor: 'white',
+          readerMode: false,
+          animated: true,
+          modalPresentationStyle: 'fullScreen',
+          modalTransitionStyle: 'coverVertical',
+          modalEnabled: true,
+          enableBarCollapsing: false,
+          // Android Properties
+          showTitle: true,
+          toolbarColor: color.primary,
+          secondaryToolbarColor: 'black',
+          enableUrlBarHiding: true,
+          enableDefaultShare: true,
+          forceCloseOnRedirection: false,
+          // Specify full animation resource identifier(package:anim/name)
+          // or only resource name(in case of animation bundled with app).
+          animations: {
+            startEnter: 'slide_in_right',
+            startExit: 'slide_out_left',
+            endEnter: 'slide_in_left',
+            endExit: 'slide_out_right',
+          },
+          headers: {
+            'my-custom-header': 'my custom header value',
+          },
+        });
+        // Alert.alert(JSON.stringify(result));
+      } else {
+        Linking.openURL(url);
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
   const showChangeCurrency = (progress, dragX) => {
     return (
       <LinearGradient
         style={GlobalStyle.swipeableLeftCont}
-        colors={[color.gradiantFromSwipeable, color.gradiantToSwipeable]}
+        colors={[color.gradientFromSwipeable, color.gradientToSwipeable]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 1 }}>
         <Text style={TextStyle.swipeableLeftText}>
@@ -197,7 +262,7 @@ export default function CurrencyScreen(props) {
     return (
       <LinearGradient
         style={GlobalStyle.swipeableRightCont}
-        colors={[color.gradiantFromSwipeable, color.gradiantToSwipeable]}
+        colors={[color.gradientFromSwipeable, color.gradientToSwipeable]}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 1 }}>
         <RingIcon />
@@ -343,6 +408,7 @@ export default function CurrencyScreen(props) {
   return (
     <View style={GlobalStyle.container}>
       <FlatList
+        style={{ flex: 4 }}
         data={selectedCurrency}
         renderItem={renderSelectedCurrency}
         keyExtractor={keyExtractor}
@@ -359,35 +425,92 @@ export default function CurrencyScreen(props) {
           {I18n.t('disconnect')}
         </Text>
       )}
-      <Calculator
-        total={total}
-        setTotal={(val) => {
-          setTotal(defaultNumber);
-          CurrencyStore.update((s) => {
-            s.currencyDict[isSelected].amount = +val;
-          });
-          setTotal(val);
-        }}
-        newNumber={newNumber}
-        setNewNumber={(val) => {
-          CurrencyStore.update((s) => {
-            s.currencyDict[isSelected].amount = +val;
-          });
-          setNewNumber(val);
-        }}
-        oldNumber={oldNumber}
-        setOldNumber={(val) => {
-          if (val) {
+      <View style={{ paddingBottom: 10 }}>
+        <Calculator
+          total={total}
+          setTotal={(val) => {
+            setTotal(defaultNumber);
             CurrencyStore.update((s) => {
               s.currencyDict[isSelected].amount = +val;
             });
-          }
-          setOldNumber(val);
-        }}
-        symbol={symbol}
-        setSymbol={(val) => {
-          setSymbol(val);
-        }}
+            setTotal(val);
+          }}
+          newNumber={newNumber}
+          setNewNumber={(val) => {
+            CurrencyStore.update((s) => {
+              s.currencyDict[isSelected].amount = +val;
+            });
+            setNewNumber(val);
+          }}
+          oldNumber={oldNumber}
+          setOldNumber={(val) => {
+            if (val) {
+              CurrencyStore.update((s) => {
+                s.currencyDict[isSelected].amount = +val;
+              });
+            }
+            setOldNumber(val);
+          }}
+          symbol={symbol}
+          setSymbol={(val) => {
+            setSymbol(val);
+          }}
+        />
+      </View>
+      <BetterBanner
+        bannerHeight={50}
+        bannerComponents={[
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: '#1997fc',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image
+              style={{ height: 80, width: 80 }}
+              source={{
+                uri: 'https://reactnative.dev/img/tiny_logo.png',
+              }}
+            />
+          </View>,
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: '#da578f',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{ fontSize: 35, color: '#fff', marginBottom: 10 }}>
+              Page 02
+            </Text>
+            <Text style={{ fontSize: 15, color: '#fff' }}>
+              Welcome! have a good time
+            </Text>
+          </View>,
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: '#7c3fe4',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{ fontSize: 35, color: '#fff', marginBottom: 10 }}>
+              Page 03
+            </Text>
+            <Text style={{ fontSize: 15, color: '#fff' }}>
+              Welcome! have a good time
+            </Text>
+          </View>,
+        ]}
+        // bannerTitles={[
+        //   'Page 01 Page 01 Page 01 Page 01 Page 01 Page 01 Page 01 ',
+        //   'Page 02',
+        //   'Page 03',
+        // ]}
+        onPress={(index) => inAppBrowser()}
+        // indicatorContainerBackgroundColor={'rgba(0,0,0,0.3)'}
+        isSeamlessScroll={true}
       />
     </View>
   );

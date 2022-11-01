@@ -6,15 +6,20 @@ import GeneralSettingsScreen from '../screens/GeneralSettingsScreen';
 import CurrencyScreen from '../screens/CurrencyScreen';
 import CurrencySettingsScreen from '../screens/CurrencySettingsScreen';
 import CurrencyListScreen from '../screens/CurrencyListScreen';
+import CryptoScreen from '../screens/CryptoScreen';
 // import LoginScreen from '../screens/LoginScreen';
 import CurrencyDetailsScreen from '../screens/CurrencyDetailsScreen';
+import CryptoDetailsScreen from '../screens/CryptoDetailsScreen';
+import CryptoListScreen from '../screens/CryptoListScreen';
+import TermScreen from '../screens/TermScreen';
+import PrivacyScreen from '../screens/PrivacyScreen';
 
 const Stack = createStackNavigator();
 
 function MainNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName={'CurrencySettings'}
+      initialRouteName={'Term'}
       gestureEnabled={false}
       screenOptions={{
         headerTitleStyle: {
@@ -38,6 +43,11 @@ function MainNavigator() {
       />
       <Stack.Screen name="CurrencyList" component={CurrencyListScreen} />
       <Stack.Screen name="CurrencyDetails" component={CurrencyDetailsScreen} />
+      <Stack.Screen name="Crypto" component={CryptoScreen} />
+      <Stack.Screen name="CryptoDetails" component={CryptoDetailsScreen} />
+      <Stack.Screen name="CryptoList" component={CryptoListScreen} />
+      <Stack.Screen name="Term" component={TermScreen} />
+      <Stack.Screen name="Privacy" component={PrivacyScreen} />
       {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
     </Stack.Navigator>
   );

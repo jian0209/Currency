@@ -162,6 +162,27 @@ export const getCurrency = async () => {
   return returnData;
 };
 
+const cryptoKey = 'Crypto_key';
+export const setCrypto = async (crypto) => {
+  try {
+    await AsyncStorage.setItem(cryptoKey, JSON.stringify(crypto));
+  } catch (err) {
+    console.error('LocalStorage: setCrypto: ', err);
+  }
+};
+
+export const getCrypto = async () => {
+  let returnData;
+  try {
+    await AsyncStorage.getItem(cryptoKey)
+      .then((req) => JSON.parse(req))
+      .then((json) => (returnData = json));
+  } catch (err) {
+    console.error('LocalStorage: getCrypto: ', err);
+  }
+  return returnData;
+};
+
 export const clearAllStorage = async () => {
   // use it be careful
   try {

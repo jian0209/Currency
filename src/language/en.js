@@ -46,5 +46,10 @@ export default {
     Dec: 'Dec',
   },
   disconnect: 'Network unstable, please try again.',
+  switchCrypto: 'Switch Cryptocurrency',
+  cryptoList: 'Cryptocurrency List',
+  termPrivacy: 'Term & Privacy',
+  term: 'Term & Conditions',
+  privacy: 'Privacy Policy',
   //
 };

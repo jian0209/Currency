@@ -15,3 +15,11 @@ export const DEFAULT_SELECTED_CURRENCY = [
   'SGD',
   'CAD',
 ];
+export const DEFAULT_SELECTED_CRYPTO = [
+  'BTC',
+  'ETH',
+  'USD',
+  'SGD',
+  'GBP',
+  'EOS',
+];

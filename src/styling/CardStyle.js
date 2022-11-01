@@ -128,11 +128,25 @@ export const CardStyle = StyleSheet.create({
     paddingVertical: height * 0.01,
     paddingHorizontal: height * 0.01,
     borderRadius: 10,
-    backgroundColor: color.gradiantToSwipeable,
+    backgroundColor: color.gradientToSwipeable,
   },
   logSignTextBtnCard: {
     flex: 1,
     alignItems: 'center',
     paddingVertical: height * 0.01,
+  },
+  termPrivacyMainCard: {
+    marginHorizontal: 20,
+    marginVertical: 20,
+  },
+  titleListCard: {
+    flexDirection: 'row',
+    height: height * 0.05,
+    marginBottom: 10,
+  },
+  loadingCard: {
+    height: height,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

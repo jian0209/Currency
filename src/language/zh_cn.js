@@ -46,5 +46,10 @@ export default {
     Dec: '12月',
   },
   disconnect: '网络看似很不好，请再试一次。',
+  switchCrypto: '切换数字货币',
+  cryptoList: '数字货币列表',
+  termPrivacy: '条款和隐私',
+  term: '服务协议',
+  privacy: '用户隐私政策',
   //
 };

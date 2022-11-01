@@ -16,7 +16,7 @@ import moment from 'moment';
 import I18n from 'react-native-i18n';
 import { useCallback } from 'react';
 
-export default function GeneralSettingsScreen(props) {
+export default function CurrencyDetailsScreen(props) {
   const { navigation } = props;
 
   const dateSelect = ['1W', '1M', '3M', '6M', '9M', '1Y'];
@@ -82,6 +82,7 @@ export default function GeneralSettingsScreen(props) {
         });
       })
       .catch((err) => {
+        console.log(err);
         setIsDisconnected(true);
       })
       .finally(() => {
@@ -141,6 +142,7 @@ export default function GeneralSettingsScreen(props) {
         setIsDisconnected(false);
       })
       .catch((err) => {
+        console.log(err);
         setIsDisconnected(true);
       })
       .finally(() => {
@@ -214,7 +216,7 @@ export default function GeneralSettingsScreen(props) {
         {isDisconnected ? (
           <Text style={TextStyle.currencyText}>{I18n.t('disconnect')}</Text>
         ) : isLoading ? (
-          <ActivityIndicator size="large" color={color.gradiantFromSwipeable} />
+          <ActivityIndicator size="large" color={color.gradientFromSwipeable} />
         ) : (
           <>
             <Chart

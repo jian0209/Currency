@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.matrixnetworking.currency.converter",
+  "applicationId": "com.matrixnetworking.currency.convertor",
   "variantName": "release",
   "elements": [
     {
@@ -16,7 +16,7 @@
         }
       ],
       "attributes": [],
-      "versionCode": 1004,
+      "versionCode": 1006,
       "versionName": "1.0",
       "outputFile": "app-x86_64-release.apk"
     },
@@ -25,13 +25,13 @@
       "filters": [
         {
           "filterType": "ABI",
-          "value": "armeabi-v7a"
+          "value": "arm64-v8a"
         }
       ],
       "attributes": [],
-      "versionCode": 1001,
+      "versionCode": 1003,
       "versionName": "1.0",
-      "outputFile": "app-armeabi-v7a-release.apk"
+      "outputFile": "app-arm64-v8a-release.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -51,13 +51,13 @@
       "filters": [
         {
           "filterType": "ABI",
-          "value": "arm64-v8a"
+          "value": "armeabi-v7a"
         }
       ],
       "attributes": [],
-      "versionCode": 1003,
+      "versionCode": 1001,
       "versionName": "1.0",
-      "outputFile": "app-arm64-v8a-release.apk"
+      "outputFile": "app-armeabi-v7a-release.apk"
     }
   ],
   "elementType": "File"

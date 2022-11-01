@@ -81,4 +81,23 @@ export const TextStyle = StyleSheet.create({
   calculatorDeleteText: {
     fontSize: 12,
   },
+  termMainText: {
+    color: color.white,
+    fontSize: 20,
+  },
+  termSubMainText: {
+    color: color.white,
+    fontSize: 18,
+    marginVertical: 5,
+  },
+  termSubText: {
+    color: color.white,
+    fontSize: 16,
+    marginVertical: 10,
+    textAlign: 'justify',
+  },
+  borderBottomText: {
+    borderBottomWidth: 1,
+    borderBottomColor: color.white,
+  },
 });
