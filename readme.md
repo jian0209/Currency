@@ -38,4 +38,4 @@ Change icon
 - android
   |- change png at /android/app/src/main/res/midmap...
 
-<!-- have crypto -->
+###### Have Crypto
