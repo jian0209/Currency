@@ -37,3 +37,5 @@ Change icon
   |- open ios/Exchange.xcodeproj
 - android
   |- change png at /android/app/src/main/res/midmap...
+
+<!-- have crypto -->
