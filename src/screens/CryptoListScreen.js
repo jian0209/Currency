@@ -92,7 +92,6 @@ export default function CryptoListScreen(props) {
           let cryptoDict = {};
           let i = 1;
           await getMultiCrypto(temp[0], temp.slice(1, 6)).then((data) => {
-            console.log(data);
             selectedCryptoArr.push({
               id: i,
               name: Object.keys(data)[0],
@@ -176,7 +175,6 @@ export default function CryptoListScreen(props) {
             CurrencyStore.update((s) => {
               s.selectedCrypto = selectedCryptoArr;
             });
-            console.log(selectedCryptoArr);
           });
           selectedCryptoArr.forEach((cur) => {
             cryptoDict[cur.name] = {

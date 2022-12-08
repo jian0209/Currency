@@ -23,3 +23,14 @@ export const DEFAULT_SELECTED_CRYPTO = [
   'GBP',
   'EOS',
 ];
+
+export const BANNER_ARRAY = [
+  {
+    uri: 'https://test.goduck.io/image/convertor.jpeg',
+    connectUrl: 'https://www.cngold.org/quote/index_1.html',
+  },
+  {
+    uri: 'https://test.goduck.io/image/finance_news.png',
+    connectUrl: 'https://finance.sina.com.cn/forex/',
+  },
+];

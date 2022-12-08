@@ -22,6 +22,7 @@ import {
 import { EMPTY_NUMBER } from '../utils/constant';
 import I18n from 'react-native-i18n';
 import moment from 'moment';
+import { height } from '../styling/Global';
 
 export default function CurrencySettingsScreen(props) {
   const { navigation } = props;
@@ -153,143 +154,160 @@ export default function CurrencySettingsScreen(props) {
   };
 
   return (
-    <ScrollView style={GlobalStyle.container}>
-      <View style={CardStyle.settingSubCard}>
-        <Text style={TextStyle.settingSubText}>
-          {I18n.t('lastUpdate')}{' '}
-          {I18n.currentLocale() === 'en'
-            ? moment(updatedDate * 1000)
-                .format('HH:mm, DD MMM')
-                .toString()
-            : I18n.t(
-                'monthlyAbbreviation.' +
-                  moment(updatedDate * 1000)
-                    .format('MMM')
-                    .toString()
-              ) +
-              ' ' +
-              moment(updatedDate * 1000)
-                .format('DD')
-                .toString() +
-              '日, ' +
-              moment(updatedDate * 1000)
-                .format('HH:mm')
-                .toString()}
-        </Text>
-      </View>
-      <View style={CardStyle.settingCard}>
-        <TouchableOpacity
-          onPress={() => {
-            setShowCurrencyValue(!showCurrencyValue);
-          }}
-          style={CardStyle.insideSettingCard}>
-          <View style={CardStyle.settingMainLeftCard}>
-            {showCurrencyValue ? <DownIcon /> : <RightIcon />}
-            <Text style={TextStyle.settingText}>
-              {I18n.t('defaultCurrency')}
-            </Text>
-          </View>
-          <Text style={TextStyle.settingDropDownText}>{defaultNumber}</Text>
-        </TouchableOpacity>
-        {showCurrencyValue && (
-          <View style={CardStyle.settingDropDownCard}>
-            {defaultValueArr.map((item, index) => {
-              return (
-                <View key={index}>
+    <>
+      <ScrollView style={GlobalStyle.container}>
+        <View style={CardStyle.settingSubCard}>
+          <Text style={TextStyle.settingSubText}>
+            {I18n.t('lastUpdate')}{' '}
+            {I18n.currentLocale() === 'en'
+              ? moment(updatedDate * 1000)
+                  .format('HH:mm, DD MMM')
+                  .toString()
+              : I18n.t(
+                  'monthlyAbbreviation.' +
+                    moment(updatedDate * 1000)
+                      .format('MMM')
+                      .toString()
+                ) +
+                ' ' +
+                moment(updatedDate * 1000)
+                  .format('DD')
+                  .toString() +
+                '日, ' +
+                moment(updatedDate * 1000)
+                  .format('HH:mm')
+                  .toString()}
+          </Text>
+        </View>
+        <View style={CardStyle.settingCard}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowCurrencyValue(!showCurrencyValue);
+            }}
+            style={CardStyle.insideSettingCard}>
+            <View style={CardStyle.settingMainLeftCard}>
+              {showCurrencyValue ? <DownIcon /> : <RightIcon />}
+              <Text style={TextStyle.settingText}>
+                {I18n.t('defaultCurrency')}
+              </Text>
+            </View>
+            <Text style={TextStyle.settingDropDownText}>{defaultNumber}</Text>
+          </TouchableOpacity>
+          {showCurrencyValue && (
+            <View style={CardStyle.settingDropDownCard}>
+              {defaultValueArr.map((item, index) => {
+                return (
+                  <View key={index}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        SettingStore.update((s) => {
+                          s.defaultNumber = item.key;
+                        });
+                        setCurrencyValue(item.key.toString());
+                      }}
+                      style={CardStyle.settingDropDownInsideCard}>
+                      <Text
+                        style={
+                          +defaultNumber === item.key
+                            ? TextStyle.selectedSettingDropDownText
+                            : TextStyle.settingDropDownText
+                        }>
+                        {item.value}
+                      </Text>
+                      {+defaultNumber === item.key ? <CheckIcon /> : null}
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+          <TouchableOpacity
+            onPress={() => {
+              setShowDecimal(!showDecimal);
+            }}
+            style={CardStyle.insideSettingCard}>
+            <View style={CardStyle.settingMainLeftCard}>
+              {showDecimal ? <DownIcon /> : <RightIcon />}
+              <Text style={TextStyle.settingText}>
+                {I18n.t('decimalDigits')}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          {showDecimal && (
+            <View style={CardStyle.settingDropDownCard}>
+              <Text style={TextStyle.decimalLeftText}>
+                {I18n.t('legalTender')}
+              </Text>
+              <View style={CardStyle.settingDropDownInsideCard}>
+                <View style={CardStyle.settingDropDownDecimalLeftCard}>
                   <TouchableOpacity
                     onPress={() => {
-                      SettingStore.update((s) => {
-                        s.defaultNumber = item.key;
-                      });
-                      setCurrencyValue(item.key.toString());
+                      handleDecimalLegal(false);
                     }}
-                    style={CardStyle.settingDropDownInsideCard}>
-                    <Text
-                      style={
-                        +defaultNumber === item.key
-                          ? TextStyle.selectedSettingDropDownText
-                          : TextStyle.settingDropDownText
-                      }>
-                      {item.value}
-                    </Text>
-                    {+defaultNumber === item.key ? <CheckIcon /> : null}
+                    style={ButtonStyle.settingBtn}>
+                    <Text style={TextStyle.decimalLeftText}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={TextStyle.decimalLeftText}>
+                    {defaultLegalDecimal.split('_')[0]}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleDecimalLegal(true);
+                    }}
+                    style={ButtonStyle.settingBtn}>
+                    <Text style={TextStyle.decimalLeftText}>+</Text>
                   </TouchableOpacity>
                 </View>
-              );
-            })}
-          </View>
-        )}
-        <TouchableOpacity
-          onPress={() => {
-            setShowDecimal(!showDecimal);
-          }}
-          style={CardStyle.insideSettingCard}>
-          <View style={CardStyle.settingMainLeftCard}>
-            {showDecimal ? <DownIcon /> : <RightIcon />}
-            <Text style={TextStyle.settingText}>{I18n.t('decimalDigits')}</Text>
-          </View>
-        </TouchableOpacity>
-        {showDecimal && (
-          <View style={CardStyle.settingDropDownCard}>
-            <Text style={TextStyle.decimalLeftText}>
-              {I18n.t('legalTender')}
-            </Text>
-            <View style={CardStyle.settingDropDownInsideCard}>
-              <View style={CardStyle.settingDropDownDecimalLeftCard}>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleDecimalLegal(false);
-                  }}
-                  style={ButtonStyle.settingBtn}>
-                  <Text style={TextStyle.decimalLeftText}>-</Text>
-                </TouchableOpacity>
-                <Text style={TextStyle.decimalLeftText}>
-                  {defaultLegalDecimal.split('_')[0]}
+                <Text style={TextStyle.decimalRightText}>
+                  {decimalLegalList[defaultLegalDecimal.split('_')[0] / 2].num}
                 </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleDecimalLegal(true);
-                  }}
-                  style={ButtonStyle.settingBtn}>
-                  <Text style={TextStyle.decimalLeftText}>+</Text>
-                </TouchableOpacity>
               </View>
-              <Text style={TextStyle.decimalRightText}>
-                {decimalLegalList[defaultLegalDecimal.split('_')[0] / 2].num}
-              </Text>
-            </View>
-            <Text style={TextStyle.decimalLeftText}>{I18n.t('crypto')}</Text>
-            <View style={CardStyle.settingDropDownInsideCard}>
-              <View style={CardStyle.settingDropDownDecimalLeftCard}>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleDecimalCrypto(false);
-                  }}
-                  style={ButtonStyle.settingBtn}>
-                  <Text style={TextStyle.decimalLeftText}>-</Text>
-                </TouchableOpacity>
-                <Text style={TextStyle.decimalLeftText}>
-                  {defaultCryptoDecimal.split('_')[0]}
+              <Text style={TextStyle.decimalLeftText}>{I18n.t('crypto')}</Text>
+              <View style={CardStyle.settingDropDownInsideCard}>
+                <View style={CardStyle.settingDropDownDecimalLeftCard}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleDecimalCrypto(false);
+                    }}
+                    style={ButtonStyle.settingBtn}>
+                    <Text style={TextStyle.decimalLeftText}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={TextStyle.decimalLeftText}>
+                    {defaultCryptoDecimal.split('_')[0]}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleDecimalCrypto(true);
+                    }}
+                    style={ButtonStyle.settingBtn}>
+                    <Text style={TextStyle.decimalLeftText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={TextStyle.decimalRightText}>
+                  {
+                    decimalCryptoList[
+                      cryptoDict[defaultCryptoDecimal.split('_')[0]]
+                    ].num
+                  }
                 </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleDecimalCrypto(true);
-                  }}
-                  style={ButtonStyle.settingBtn}>
-                  <Text style={TextStyle.decimalLeftText}>+</Text>
-                </TouchableOpacity>
               </View>
-              <Text style={TextStyle.decimalRightText}>
-                {
-                  decimalCryptoList[
-                    cryptoDict[defaultCryptoDecimal.split('_')[0]]
-                  ].num
-                }
-              </Text>
             </View>
-          </View>
-        )}
-      </View>
-    </ScrollView>
+          )}
+        </View>
+      </ScrollView>
+      <Text
+        style={[
+          TextStyle.decimalLeftText,
+          // eslint-disable-next-line react-native/no-inline-styles
+          {
+            textAlign: 'center',
+            position: 'absolute',
+            bottom: 20,
+            width: '100%',
+          },
+        ]}>
+        v 1.2.0
+      </Text>
+    </>
   );
 }

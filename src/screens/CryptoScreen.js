@@ -36,6 +36,7 @@ import BetterBanner from 'react-native-better-banner';
 import { BannerStore } from '../stores/BannerStore';
 import { CustomTabs } from 'react-native-custom-tabs';
 import { getBannerList } from '../api/Banner';
+import { BANNER_ARRAY } from '../utils/constant';
 
 export default function CryptoScreen(props) {
   const { navigation } = props;
@@ -43,6 +44,7 @@ export default function CryptoScreen(props) {
   const bannerList = BannerStore.useState((s) => s.bannerList);
 
   const cryptoDict = CurrencyStore.useState((s) => s.cryptoDict);
+  const currencyDict = CurrencyStore.useState((s) => s.countryDict);
   const selectedCrypto = CurrencyStore.useState((s) => s.selectedCrypto);
   const defaultNumber = SettingStore.useState((s) => s.defaultNumber);
   const defaultCryptoDecimal = SettingStore.useState(
@@ -61,15 +63,17 @@ export default function CryptoScreen(props) {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const displayBannerList = useRef(
-    bannerList.map((item) => {
-      return {
-        uri: item.ImageUrl,
-        connectUrl: item.Url,
-      };
-    })
+    // bannerList.map((item) => {
+    //   return {
+    //     uri: item.ImageUrl,
+    //     connectUrl: item.Url,
+    //   };
+    // })
+    BANNER_ARRAY
   );
 
   useLayoutEffect(() => {
+    console.log(displayBannerList.current);
     navigation.setOptions({
       headerLeft: () => (
         // <TouchableOpacity
@@ -191,6 +195,9 @@ export default function CryptoScreen(props) {
   };
 
   const inAppBrowser = async (index) => {
+    if (index === -1) {
+      index = 0;
+    }
     const url = displayBannerList.current[index].connectUrl;
     if (Platform.OS === 'android') {
       CustomTabs.openURL(url, {
@@ -362,21 +369,37 @@ export default function CryptoScreen(props) {
                     </Text>
                   ) : (
                     <Text numberOfLines={1} style={TextStyle.currencyText}>
-                      {!total && newNumber && oldNumber
+                      {!total &&
+                      newNumber &&
+                      oldNumber &&
+                      currencyDict[item.item.name]
+                        ? ToThousands(
+                            parseFloat(+total).toFixed(
+                              +defaultLegalDecimal.split('_')[0]
+                            )
+                          )
+                        : !total && newNumber && oldNumber
                         ? ToThousands(
                             parseFloat(+total).toFixed(
                               +defaultCryptoDecimal.split('_')[0]
                             )
                           )
+                        : currencyDict[item.item.name] &&
+                          cryptoDict[item.item.name]?.amount
+                        ? ToThousands(
+                            cryptoDict[item.item.name].amount.toFixed(
+                              +defaultLegalDecimal.split('_')[0]
+                            )
+                          )
                         : cryptoDict[item.item.name] &&
-                          cryptoDict[item.item.name].amount
+                          cryptoDict[item.item.name]?.amount
                         ? ToThousands(
                             cryptoDict[item.item.name].amount.toFixed(
                               +defaultCryptoDecimal.split('_')[0]
                             )
                           )
                         : cryptoDict[item.item.name] &&
-                          cryptoDict[item.item.name].defaultAmount
+                          cryptoDict[item.item.name]?.defaultAmount
                         ? ToThousands(cryptoDict[item.item.name].defaultAmount)
                         : null}
                     </Text>
